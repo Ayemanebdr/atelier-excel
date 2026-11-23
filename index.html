@@ -2,351 +2,498 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Atelier Excel & Power BI</title>
-<meta name="theme-color" content="#0f6b3a">
+<meta name="theme-color" content="#0b5d3b">
 <meta name="description" content="Cours et cas pratiques Excel & Power BI pour le contrôle de gestion">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-/* VOICE: a calm, serious training workbook for a future financial controller.
-   IDEA: the app behaves like an Excel workbook — sheet tabs, a formula bar, a selected cell.
-   PICTURE: the progression as a spreadsheet row of 16 cells, this week's two sessions as two big cells.
-   COLOUR and TYPE: spreadsheet green leads, white ground, yellow selected-cell accent; IBM Plex Sans + Plex Mono for formulas.
-   LAYOUT: green band with the next session and the progress picture, then the programme as a sheet; session pages with sheet tabs. */
+/* VOICE: a modern learning app for a future financial controller — focused, calm, encouraging.
+   IDEA: a spreadsheet you progress through: the selected yellow cell marks where you are.
+   PICTURE: a progress ring and the 16-cell session row on the home screen.
+   COLOUR and TYPE: spreadsheet green leads, mint surfaces, yellow selected-cell accent; Manrope + JetBrains Mono for formulas.
+   LAYOUT: app shell — sidebar on desktop, bottom tab bar on phone; cards, segmented controls, accordions. */
 :root{color-scheme:light dark;
---bg:light-dark(#ffffff,#0e1411);--panel:light-dark(#f4f7f5,#151d19);--ink:light-dark(#14201a,#e7eee9);--mute:light-dark(#5b6b62,#9bb0a4);
---grid:light-dark(#dfe6e1,#26332c);--green:#0f6b3a;--green2:light-dark(#0f6b3a,#3fae6f);--band:light-dark(#0f6b3a,#0b3b22);
---yellow:#ffd84a;--yellowbg:light-dark(#fff6cf,#3a3418);--red:light-dark(#b4380e,#ff8a5c);--redbg:light-dark(#fdeee7,#3a1d12);--bluebg:light-dark(#e8f3ec,#14281c)}
+--bg:light-dark(#f5f7f6,#0b100d);--card:light-dark(#ffffff,#141b17);--ink:light-dark(#10201a,#e8efea);--mute:light-dark(#5e6f66,#93a89c);
+--line:light-dark(#e3e9e5,#223029);--soft:light-dark(#eef4f0,#18231d);--g:#0b5d3b;--g2:light-dark(#0b5d3b,#47b77a);--gl:light-dark(#e3f2e9,#16301f);
+--y:#ffd43b;--yl:light-dark(#fff5cc,#3a3214);--r:light-dark(#b93a12,#ff8c63);--rl:light-dark(#fdece5,#3a1c11);
+--sh:0 1px 2px rgba(16,32,26,.06),0 8px 24px rgba(16,32,26,.06);--rad:18px;
+--safe-b:env(safe-area-inset-bottom,0px);--safe-t:env(safe-area-inset-top,0px)}
 :root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
 *{box-sizing:border-box;min-width:0}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "IBM Plex Sans",system-ui,sans-serif;overflow-x:clip}
-code,kbd,pre{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.92em}
-code{overflow-wrap:anywhere;background:var(--panel);padding:1px 5px;border-radius:4px}
-kbd{border:1px solid var(--grid);border-bottom-width:2px;border-radius:5px;padding:0 6px;background:var(--bg)}
-a{color:var(--green2)}
-button{font:inherit;cursor:pointer}
-.wrap{max-width:1240px;margin:0 auto;padding:0 max(4vw,16px)}
-header.top{border-bottom:1px solid var(--grid);background:var(--bg);position:sticky;top:0;z-index:5}
-header.top .wrap{display:flex;align-items:center;gap:16px;min-height:58px;flex-wrap:wrap}
-.brand{font-weight:700;letter-spacing:-.01em;margin-right:auto;display:flex;align-items:center;gap:10px}
-.brand i{width:22px;height:22px;border-radius:4px;background:var(--green);display:inline-grid;place-items:center;color:#fff;font-style:normal;font-size:12px}
-.brand small{color:var(--mute);font-weight:400}
-nav.main{display:flex;gap:4px;flex-wrap:wrap}
-nav.main a{text-decoration:none;color:var(--ink);padding:10px 14px;border-radius:8px;min-height:44px;display:inline-flex;align-items:center}
-nav.main a.on{background:var(--bluebg);color:var(--green2);font-weight:600}
-.band{background:var(--band);color:#fff;padding:clamp(28px,4vw,56px) 0}
-.hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:clamp(24px,4vw,56px);align-items:center}
-.eyebrow{font-size:14px;opacity:.85;margin:0 0 10px}
-h1{font-size:clamp(32px,4.4vw,50px);line-height:1.05;margin:0 0 14px;text-wrap:balance;letter-spacing:-.02em}
-h2{font-size:clamp(24px,2.6vw,32px);line-height:1.15;margin:0 0 12px;letter-spacing:-.01em}
-h3{font-size:20px;margin:0 0 8px}
-h4{font-size:17px;margin:26px 0 8px}
-.hero p.m{font-size:17px;max-width:56ch;opacity:.92;margin:0 0 22px}
-.btns{display:flex;gap:10px;flex-wrap:wrap}
-.btn{border:0;border-radius:10px;padding:12px 18px;min-height:44px;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
-.btn.y{background:var(--yellow);color:#1b1a0f}
-.btn.o{background:transparent;color:inherit;box-shadow:inset 0 0 0 1.5px currentColor}
-.btn.g{background:var(--green);color:#fff}
-.btn:focus-visible,a:focus-visible,button:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
-.sheet{background:#fff;color:#14201a;border-radius:14px;padding:clamp(16px,2.4vw,26px);box-shadow:0 18px 40px rgba(0,0,0,.25)}
-:root[data-theme=dark] .sheet,.sheet{background:light-dark(#fff,#111a15);color:var(--ink)}
-.sheet .lbl{font-size:13px;color:var(--mute);margin-bottom:6px}
-.week{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
-.week div{border:1.5px solid var(--grid);border-radius:10px;padding:14px;min-height:96px;display:flex;flex-direction:column;justify-content:space-between}
-.week div.ok{border-color:var(--green);background:var(--bluebg)}
-.week b{font-size:30px;line-height:1}
-.week span{font-size:14px;color:var(--mute)}
-.strip{display:grid;grid-template-columns:repeat(16,minmax(0,1fr));border:1px solid var(--grid);border-radius:8px;overflow:hidden}
-.strip a{aspect-ratio:1/1.15;display:grid;place-items:center;font:500 12px "IBM Plex Mono",monospace;border-right:1px solid var(--grid);color:var(--mute);text-decoration:none}
-.strip a:last-child{border-right:0}
-.strip a.ready{color:var(--ink)}
-.strip a.cur{background:var(--yellowbg);box-shadow:inset 0 0 0 2px var(--yellow);color:var(--ink);font-weight:700}
-.strip a.done{background:var(--green);color:#fff}
-.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--mute);margin-top:10px}
+html{scroll-padding-top:80px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 Manrope,system-ui,sans-serif;overflow-x:clip;-webkit-tap-highlight-color:transparent}
+code,kbd,pre{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.88em}
+code{overflow-wrap:anywhere;background:var(--soft);padding:1px 6px;border-radius:6px}
+kbd{border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:0 6px;background:var(--card)}
+button{font:inherit;cursor:pointer;color:inherit}
+a{color:var(--g2)}
+:focus-visible{outline:3px solid var(--y);outline-offset:2px;border-radius:8px}
+h1,h2,h3,h4{letter-spacing:-.02em;line-height:1.15;margin:0}
+h1{font-size:clamp(28px,4vw,42px);font-weight:800;text-wrap:balance}
+h2{font-size:clamp(21px,2.4vw,26px);font-weight:800}
+h3{font-size:18px;font-weight:700}
+h4{font-size:16px;font-weight:700;margin:22px 0 8px}
+p{margin:0 0 12px}
+.mute{color:var(--mute)}.small{font-size:14px}
+/* shell */
+.shell{display:grid;grid-template-columns:256px minmax(0,1fr);min-height:100vh}
+aside.side{position:sticky;top:0;height:100vh;padding:22px 16px;border-right:1px solid var(--line);background:var(--card);display:flex;flex-direction:column;gap:6px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;padding:4px 8px 18px}
+.brand .lg{width:34px;height:34px;border-radius:10px;background:var(--g);display:grid;place-items:center;color:#fff;font:italic 700 15px "JetBrains Mono",monospace;box-shadow:inset 0 0 0 2px var(--y)}
+.brand small{display:block;font-weight:500;color:var(--mute);font-size:12px}
+.nav a{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:12px;text-decoration:none;color:var(--ink);font-weight:600;min-height:44px}
+.nav a svg{width:20px;height:20px;flex:none}
+.nav a.on{background:var(--gl);color:var(--g2)}
+.nav a:hover:not(.on){background:var(--soft)}
+.syncbox{margin-top:auto;background:var(--soft);border-radius:14px;padding:12px;font-size:13px}
+.dot{display:inline-block;width:8px;height:8px;border-radius:9px;background:var(--mute);margin-right:6px}
+.dot.ok{background:#22a55a}.dot.warn{background:#e0a000}
+main{padding:28px clamp(16px,3.5vw,44px) 60px;max-width:1120px;width:100%}
+.topbar{display:none}
+.tabbar{display:none}
+@media(max-width:899px){
+  .shell{grid-template-columns:minmax(0,1fr)}
+  aside.side{display:none}
+  .topbar{display:flex;position:sticky;top:0;z-index:20;align-items:center;gap:10px;padding:calc(10px + var(--safe-t)) 16px 10px;background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+  .topbar .brand{padding:0;flex:1}
+  main{padding:16px 16px calc(96px + var(--safe-b))}
+  .tabbar{display:grid;grid-template-columns:repeat(4,1fr);position:fixed;left:0;right:0;bottom:0;z-index:30;background:color-mix(in srgb,var(--card) 92%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--line);padding:6px 6px calc(6px + var(--safe-b))}
+  .tabbar a{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11.5px;font-weight:700;text-decoration:none;color:var(--mute);padding:6px 0;border-radius:12px;min-height:52px;justify-content:center}
+  .tabbar a svg{width:22px;height:22px}
+  .tabbar a.on{color:var(--g2)}
+  .tabbar a.on svg{background:var(--gl);border-radius:10px;padding:2px 10px;width:42px;height:26px;box-sizing:content-box;margin:-2px 0}
+}
+/* cards */
+.card{background:var(--card);border-radius:var(--rad);box-shadow:var(--sh);padding:clamp(16px,2.4vw,24px)}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:minmax(0,1.35fr) minmax(0,1fr)}
+@media(max-width:899px){.g2{grid-template-columns:minmax(0,1fr)}}
+.hello{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.hero{background:var(--g);color:#fff;border-radius:22px;padding:clamp(20px,3vw,30px);position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-40px;top:-40px;width:220px;height:220px;background:repeating-linear-gradient(0deg,rgba(255,255,255,.07) 0 1px,transparent 1px 28px),repeating-linear-gradient(90deg,rgba(255,255,255,.07) 0 1px,transparent 1px 44px);border-radius:30px;transform:rotate(8deg)}
+.hero .lab{font-size:13px;font-weight:700;opacity:.85;margin-bottom:8px;position:relative}
+.hero h1{color:#fff;margin-bottom:10px;position:relative;font-size:clamp(26px,3.6vw,38px)}
+.hero p{opacity:.9;position:relative;max-width:52ch}
+.pills{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 18px;position:relative}
+.pill{font-size:13px;font-weight:700;border-radius:99px;padding:5px 11px;background:rgba(255,255,255,.14)}
+.pill.done{background:var(--y);color:#1c1a0c}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:14px;padding:12px 18px;min-height:48px;font-weight:800;text-decoration:none;position:relative}
+.btn.y{background:var(--y);color:#1c1a0c}.btn.g{background:var(--g);color:#fff}
+.btn.ghost{background:var(--soft);color:var(--ink)}
+.btn.full{width:100%}
+.ringwrap{display:flex;align-items:center;gap:18px}
+.ring{width:112px;height:112px;flex:none;position:relative}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:24px;font-weight:800}
+.ring b small{display:block;font-size:11px;color:var(--mute);font-weight:600;margin-top:-6px}
+.week{display:flex;gap:8px;margin-top:10px}
+.week span{flex:1;border-radius:12px;border:1.5px dashed var(--line);padding:8px 10px;font-size:13px;font-weight:700;color:var(--mute)}
+.week span.ok{border:0;background:var(--gl);color:var(--g2)}
+.strip{display:grid;grid-template-columns:repeat(16,minmax(0,1fr));gap:4px;margin-top:16px}
+.strip i{aspect-ratio:1;border-radius:6px;background:var(--soft);display:grid;place-items:center;font:600 10px "JetBrains Mono",monospace;font-style:normal;color:var(--mute)}
+.strip i.ready{background:var(--card);box-shadow:inset 0 0 0 1.5px var(--line);color:var(--ink)}
+.strip i.cur{background:var(--yl);box-shadow:inset 0 0 0 2px var(--y);color:var(--ink)}
+.strip i.done{background:var(--g);color:#fff}
 .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:16px}
-.stats div{background:var(--panel);border-radius:10px;padding:10px 12px}
-.stats b{display:block;font-size:22px}
-.stats span{font-size:13px;color:var(--mute)}
-section.pad{padding:clamp(28px,4vw,56px) 0}
-.prog{border:1px solid var(--grid);border-radius:12px;overflow:hidden}
-.row{display:grid;grid-template-columns:64px 120px minmax(0,1fr) 120px;gap:12px;align-items:center;padding:14px 16px;border-top:1px solid var(--grid);text-decoration:none;color:inherit}
-.row:first-child{border-top:0}
-a.row:hover{background:var(--panel)}
-.row .n{font:500 14px "IBM Plex Mono",monospace;color:var(--mute)}
-.row .t{font-weight:600}
-.row .d{font-size:14px;color:var(--mute)}
-.chip{font-size:13px;border-radius:99px;padding:3px 10px;white-space:nowrap;justify-self:start}
-.chip.tool{background:var(--panel)}
-.st-fait{background:var(--green);color:#fff}.st-cours{background:var(--yellowbg);color:var(--ink)}.st-faire{background:var(--bluebg);color:var(--green2)}.st-venir{color:var(--mute);background:transparent;border:1px dashed var(--grid)}
-.grp{font-size:14px;color:var(--mute);margin:22px 0 8px;font-weight:600}
+.stat{background:var(--soft);border-radius:14px;padding:12px}
+.stat b{display:block;font-size:22px;font-weight:800;line-height:1.2}
+.stat span{font-size:12.5px;color:var(--mute);font-weight:600}
+.sec{margin:30px 0 12px;display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.phase{font-size:13px;font-weight:800;color:var(--mute);margin:18px 0 8px}
+.list{display:grid;gap:8px}
+.item{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:12px;align-items:center;background:var(--card);border-radius:16px;padding:12px 14px;box-shadow:var(--sh);text-decoration:none;color:inherit}
+.item .num{width:44px;height:44px;border-radius:12px;background:var(--soft);display:grid;place-items:center;font:600 13px "JetBrains Mono",monospace}
+.item.fait .num{background:var(--g);color:#fff}.item.cours .num{background:var(--yl);box-shadow:inset 0 0 0 2px var(--y)}
+.item.venir{box-shadow:none;background:transparent;border:1.5px dashed var(--line)}
+.item.venir .t{color:var(--mute)}
+.item .t{font-weight:700;line-height:1.3}
+.item .d{font-size:13px;color:var(--mute);line-height:1.4;margin-top:2px}
+.tag{font-size:12px;font-weight:800;border-radius:99px;padding:4px 10px;white-space:nowrap}
+.tag.fait{background:var(--g);color:#fff}.tag.cours{background:var(--yl)}.tag.faire{background:var(--gl);color:var(--g2)}.tag.venir{color:var(--mute)}
 /* séance */
-.shead{padding:clamp(24px,3vw,40px) 0 0;background:var(--panel);border-bottom:1px solid var(--grid)}
-.obj{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;margin:14px 0 22px;padding:0;list-style:none}
-.obj li{background:var(--bg);border:1px solid var(--grid);border-radius:10px;padding:10px 12px;font-size:15px}
-.tabs{display:flex;gap:2px;overflow-x:auto}
-.tabs button{border:1px solid var(--grid);border-bottom:0;background:var(--panel);color:var(--mute);padding:10px 18px;min-height:44px;border-radius:10px 10px 0 0;white-space:nowrap}
-.tabs button.on{background:var(--bg);color:var(--green2);font-weight:600;box-shadow:inset 0 3px 0 var(--green2)}
-.cours{display:grid;grid-template-columns:260px minmax(0,1fr);gap:clamp(20px,3vw,48px);padding:32px 0}
-.toc{position:sticky;top:76px;align-self:start;display:flex;flex-direction:column;gap:2px}
-.toc a{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:8px;text-decoration:none;color:var(--ink);font-size:15px;line-height:1.35}
-.toc a:hover{background:var(--panel)}
-.toc a i{flex:none;width:18px;height:18px;border:1.5px solid var(--grid);border-radius:4px;margin-top:1px;font-style:normal;font-size:12px;display:grid;place-items:center}
-.toc a.ok i{background:var(--green);border-color:var(--green);color:#fff}
-.toc .bar{height:6px;background:var(--grid);border-radius:9px;margin:4px 10px 12px;overflow:hidden}.toc .bar span{display:block;height:100%;background:var(--green)}
-article.notion{border-bottom:1px solid var(--grid);padding-bottom:28px;margin-bottom:28px;max-width:78ch}
-article.notion header{display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap}
-article.notion .dur{font-size:13px;color:var(--mute)}
-.done-btn{margin-top:16px;border:1.5px solid var(--green2);color:var(--green2);background:transparent;border-radius:9px;padding:9px 14px;min-height:44px}
-.done-btn.ok{background:var(--green);border-color:var(--green);color:#fff}
-pre.formula{background:var(--panel);border-left:4px solid var(--green2);padding:12px 14px;border-radius:6px;overflow-x:auto;white-space:pre;margin:12px 0}
+.back{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--mute);font-weight:700;font-size:14px;margin-bottom:10px;min-height:36px}
+.shead{margin-bottom:14px}
+.shead .lab{font-size:13px;font-weight:800;color:var(--g2);margin-bottom:6px}
+.seg{position:sticky;top:0;z-index:10;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;background:var(--soft);padding:4px;border-radius:14px;margin:16px 0 18px}
+@media(max-width:899px){.seg{top:calc(57px + var(--safe-t))}}
+.seg button{border:0;background:transparent;border-radius:11px;padding:9px 4px;font-weight:700;font-size:14px;color:var(--mute);min-height:44px;line-height:1.2}
+.seg button small{display:block;font-size:11px;font-weight:600}
+.seg button.on{background:var(--card);color:var(--ink);box-shadow:var(--sh)}
+.objd summary{cursor:pointer;font-weight:700;font-size:14px;color:var(--mute);margin-top:10px;min-height:32px}
+.lg-only{}@media(max-width:600px){.lg-only{display:none}}
+.objs{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.objs span{font-size:13px;font-weight:600;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:5px 11px}
+.bar{height:8px;border-radius:9px;background:var(--line);overflow:hidden}.bar i{display:block;height:100%;background:var(--g2);border-radius:9px;transition:width .4s}
+.acc{background:var(--card);border-radius:18px;box-shadow:var(--sh);margin-bottom:10px;overflow:hidden}
+.acc>button{width:100%;display:grid;grid-template-columns:32px minmax(0,1fr) auto 20px;gap:12px;align-items:center;text-align:left;border:0;background:none;padding:16px;min-height:64px}
+.acc .ck{width:32px;height:32px;border-radius:10px;background:var(--soft);display:grid;place-items:center;font-weight:800;font-size:13px}
+.acc.ok .ck{background:var(--g);color:#fff}
+.acc .ti{font-weight:700;line-height:1.3}
+.acc .du{font-size:12.5px;color:var(--mute);font-weight:700;white-space:nowrap}
+.acc .ch{transition:transform .2s;color:var(--mute)}
+.acc.open .ch{transform:rotate(180deg)}
+.acc .body{padding:0 18px 20px;display:none;max-width:80ch}
+.acc.open .body{display:block}
+pre.formula{background:var(--soft);border-left:4px solid var(--g2);padding:12px 14px;border-radius:10px;overflow-x:auto;white-space:pre;margin:12px 0}
 pre.formula code{background:none;padding:0}
-.tip,.trap{border-radius:10px;padding:12px 14px;margin:14px 0;font-size:15px}
-.tip{background:var(--yellowbg)}.trap{background:var(--redbg)}
-.tip b,.trap b{display:block;margin-bottom:2px}.trap b{color:var(--red)}
-figure.xl{margin:14px 0;border:1px solid var(--grid);border-radius:8px;overflow:hidden;background:var(--bg)}
-figure.xl figcaption{font-size:13px;color:var(--mute);padding:8px 10px;border-bottom:1px solid var(--grid)}
-.fx{display:flex;border-bottom:1px solid var(--grid);font-size:14px}
-.fx .nm{padding:6px 10px;border-right:1px solid var(--grid);color:var(--mute);font-family:"IBM Plex Mono",monospace;min-width:52px}
-.fx code{background:none;padding:6px 10px}
+.tip,.trap{border-radius:14px;padding:12px 14px;margin:14px 0;font-size:15px}
+.tip{background:var(--yl)}.trap{background:var(--rl)}
+.tip b,.trap b{display:block;margin-bottom:2px}.trap b{color:var(--r)}
+figure.xl{margin:14px 0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card)}
+figure.xl figcaption{font-size:13px;color:var(--mute);padding:8px 12px;border-bottom:1px solid var(--line);font-weight:600}
+.fx{display:flex;border-bottom:1px solid var(--line);font-size:13.5px;background:var(--soft)}
+.fx .nm{padding:7px 10px;border-right:1px solid var(--line);color:var(--mute);font-family:"JetBrains Mono",monospace;min-width:52px}
+.fx code{background:none;padding:7px 10px}
 .scroll{overflow-x:auto}
-figure.xl table{border-collapse:collapse;font-size:14px;width:100%}
-figure.xl th{background:var(--panel);color:var(--mute);font-weight:500;font-size:12px;padding:3px 8px;border:1px solid var(--grid);text-align:center}
-figure.xl td{border:1px solid var(--grid);padding:5px 9px;white-space:nowrap}
+figure.xl table{border-collapse:collapse;font-size:13.5px;width:100%}
+figure.xl th{background:var(--soft);color:var(--mute);font-weight:600;font-size:11.5px;padding:3px 8px;border:1px solid var(--line)}
+figure.xl td{border:1px solid var(--line);padding:6px 9px;white-space:nowrap}
 figure.xl td.num{text-align:right;font-variant-numeric:tabular-nums}
-figure.xl td.hi{background:var(--yellowbg);box-shadow:inset 0 0 0 2px var(--yellow);font-weight:600}
-figure.xl td.src{background:var(--bluebg)}
-table.plain{border-collapse:collapse;width:100%;font-size:15px;margin:12px 0}
-table.plain th,table.plain td{border-bottom:1px solid var(--grid);padding:8px 10px;text-align:left;vertical-align:top}
-table.plain th{font-size:13px;color:var(--mute);font-weight:600}
+figure.xl td.hi{background:var(--yl);box-shadow:inset 0 0 0 2px var(--y);font-weight:700}
+figure.xl td.src{background:var(--gl)}
+table.plain{border-collapse:collapse;width:100%;font-size:14.5px;margin:12px 0}
+table.plain th,table.plain td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+table.plain th{font-size:12.5px;color:var(--mute)}
 table.num td:not(:first-child),table.num th:not(:first-child){text-align:right;white-space:nowrap}
-tr.bad td{color:var(--red);font-weight:600}
-.quiz{background:var(--panel);border-radius:14px;padding:clamp(18px,3vw,28px);max-width:78ch}
-.q{margin:18px 0}
-.q p{font-weight:600;margin:0 0 8px}
-.q .opts{display:grid;gap:6px}
-.q button{text-align:left;border:1.5px solid var(--grid);background:var(--bg);color:var(--ink);border-radius:9px;padding:10px 12px;min-height:44px}
-.q button.right{border-color:var(--green);background:var(--bluebg)}
-.q button.wrong{border-color:var(--red);background:var(--redbg)}
-.q .ex{font-size:15px;margin-top:8px;color:var(--mute)}
-.cas{padding:32px 0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,360px);gap:clamp(20px,3vw,48px)}
-blockquote{margin:14px 0;padding:14px 18px;border-left:4px solid var(--yellow);background:var(--yellowbg);border-radius:0 10px 10px 0;font-style:italic}
-.steps{list-style:none;padding:0;margin:16px 0;border:1px solid var(--grid);border-radius:12px;overflow:hidden}
-.steps li{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 14px;border-top:1px solid var(--grid)}
-.steps li:first-child{border-top:0}
-.steps button{width:44px;height:44px;border-radius:9px;border:1.5px solid var(--grid);background:var(--bg);color:var(--ink);font:600 15px "IBM Plex Mono",monospace}
-.steps li.ok button{background:var(--green);border-color:var(--green);color:#fff}
-.steps li.ok b{text-decoration:line-through;opacity:.6}
-.steps small{color:var(--mute);display:block;font-size:14px}
-.steps .min{font-size:13px;color:var(--mute);white-space:nowrap}
-.side{background:var(--panel);border-radius:14px;padding:20px;align-self:start}
-.side ol{padding-left:20px;margin:8px 0}
-.lock{text-align:center;padding:48px 20px;border:1.5px dashed var(--grid);border-radius:14px;margin:32px 0}
-.lead{font-size:19px;font-weight:600;max-width:70ch}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:18px 0}
-.kpis div{border:1px solid var(--grid);border-radius:10px;padding:12px}
-.kpis span{font-size:13px;color:var(--mute);display:block}.kpis b{font-size:clamp(22px,2.4vw,28px)}
+tr.bad td{color:var(--r);font-weight:700}
+.donebtn{margin-top:16px}
+/* quiz */
+.quiz{background:var(--card);border-radius:20px;box-shadow:var(--sh);padding:clamp(18px,3vw,26px);margin-top:18px}
+.qtop{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+.qdots{display:flex;gap:5px}.qdots i{width:22px;height:6px;border-radius:9px;background:var(--line)}.qdots i.r{background:#22a55a}.qdots i.w{background:var(--r)}.qdots i.c{background:var(--y)}
+.qq{font-size:18px;font-weight:800;margin:6px 0 14px;line-height:1.35}
+.opts{display:grid;gap:8px}
+.opts button{text-align:left;border:1.5px solid var(--line);background:var(--card);border-radius:14px;padding:12px 14px;min-height:50px;font-weight:600}
+.opts button.right{border-color:#22a55a;background:var(--gl)}.opts button.wrong{border-color:var(--r);background:var(--rl)}
+.ex{margin-top:12px;font-size:15px;background:var(--soft);border-radius:12px;padding:10px 12px}
+.qnav{display:flex;justify-content:space-between;gap:8px;margin-top:14px}
+/* cas */
+blockquote{margin:12px 0;padding:14px 16px;border-left:4px solid var(--y);background:var(--yl);border-radius:0 14px 14px 0;font-style:italic}
+.steps{display:grid;gap:8px;margin:12px 0}
+.step{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:12px;align-items:center;background:var(--card);border-radius:16px;padding:12px;box-shadow:var(--sh)}
+.step button{width:48px;height:48px;border-radius:14px;border:1.5px solid var(--line);background:var(--card);font:700 15px "JetBrains Mono",monospace}
+.step.ok button{background:var(--g);border-color:var(--g);color:#fff}
+.step.ok b{text-decoration:line-through;opacity:.55}
+.step small{display:block;color:var(--mute);font-size:13.5px;line-height:1.4}
+.step .mn{font-size:12.5px;color:var(--mute);font-weight:700;white-space:nowrap}
+.lock{text-align:center;padding:40px 20px}
+.lock .ic{width:56px;height:56px;border-radius:16px;background:var(--yl);display:grid;place-items:center;margin:0 auto 12px}
+.lead{font-size:18px;font-weight:700}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:16px 0}
+.kpis div{background:var(--soft);border-radius:14px;padding:12px}.kpis span{font-size:12.5px;color:var(--mute);display:block;font-weight:600}.kpis b{font-size:22px;font-weight:800}
 table.f td:first-child{white-space:nowrap;color:var(--mute);width:1%}
-.note{color:var(--mute);font-size:15px}
-.bilan{padding:32px 0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(20px,3vw,48px)}
-label{font-weight:600;display:block;margin:14px 0 6px}
-textarea,input[type=search]{width:100%;font:16px/1.5 "IBM Plex Sans",sans-serif;border:1.5px solid var(--grid);border-radius:10px;padding:10px 12px;background:var(--bg);color:var(--ink)}
-textarea{min-height:84px;resize:vertical}
-.ev{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--grid);font-size:15px}
-.ev .sc{display:flex;gap:4px}
-.ev .sc button{width:38px;height:44px;border:1.5px solid var(--grid);background:var(--bg);color:var(--ink);border-radius:8px}
-.ev .sc button.on{background:var(--green);border-color:var(--green);color:#fff}
-.saved{font-size:14px;color:var(--mute);min-height:22px}
-.memo td:nth-child(2){font-family:"IBM Plex Mono",monospace;font-size:14px}
+.note{color:var(--mute);font-size:14.5px}
+/* bilan */
+label.l{font-weight:700;display:block;margin:14px 0 6px}
+textarea,input[type=search]{width:100%;font:16px/1.5 Manrope,sans-serif;border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--card);color:var(--ink)}
+textarea{min-height:88px;resize:vertical}
+.ev{padding:12px 0;border-bottom:1px solid var(--line)}
+.ev p{font-weight:600;font-size:15px;margin-bottom:8px}
+.sc{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.sc button{height:44px;border:1.5px solid var(--line);background:var(--card);border-radius:12px;font-weight:800}
+.sc button.on{background:var(--g);border-color:var(--g);color:#fff}
+.saved{font-size:13px;color:var(--mute);min-height:20px;margin-top:6px}
+/* mémo */
+.chips{display:flex;gap:6px;overflow-x:auto;padding:4px 0 10px;scrollbar-width:none}
+.chips button{border:1.5px solid var(--line);background:var(--card);border-radius:99px;padding:7px 13px;font-weight:700;font-size:13.5px;white-space:nowrap;min-height:38px}
+.chips button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.memo{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+.mc{background:var(--card);border-radius:16px;box-shadow:var(--sh);padding:14px}
+.mc .th{font-size:12px;font-weight:800;color:var(--g2)}
+.mc code{display:block;margin:6px 0;background:var(--soft);padding:8px 10px;border-radius:10px;font-size:13px}
+.mc p{font-size:14px;color:var(--mute);margin:0}
+/* profil */
+.row2{display:flex;gap:10px;flex-wrap:wrap}
 .empty{color:var(--mute);padding:20px 0}
-footer{border-top:1px solid var(--grid);padding:22px 0;color:var(--mute);font-size:14px}
-@media(max-width:900px){.hero,.cas,.bilan{grid-template-columns:minmax(0,1fr)}.cours{grid-template-columns:minmax(0,1fr)}.toc{position:static;border:1px solid var(--grid);border-radius:12px;padding:8px}}
-@media(max-width:600px){.row{grid-template-columns:44px minmax(0,1fr);row-gap:4px}.row .chip.tool{display:none}.row .chip:last-child{grid-column:2}.stats{grid-template-columns:repeat(3,minmax(0,1fr))}.strip a{font-size:10px}.ev{grid-template-columns:minmax(0,1fr)}nav.main a{padding:8px 6px;font-size:15px}.brand small{display:none}header.top{position:static}.brand{width:100%;margin:8px 0 0}nav.main{width:100%;justify-content:space-between}}
-@media(prefers-reduced-motion:no-preference){.strip a.cur{animation:blink 2.4s ease-in-out infinite}@keyframes blink{50%{box-shadow:inset 0 0 0 2px transparent}}}
+@media(prefers-reduced-motion:no-preference){.view{animation:in .25s ease-out}@keyframes in{from{opacity:0;transform:translateY(6px)}}}
 </style>
 </head>
 <body>
-<header class="top"><div class="wrap">
-  <div class="brand"><i>fx</i>Atelier Excel & Power BI <small>· Rhôna Distribution</small></div>
-  <nav class="main" aria-label="Navigation"><a href="#accueil" data-nav="accueil">Tableau de bord</a><a href="#s01" data-nav="seance" id="navSeance">Séance en cours</a><a href="#memo" data-nav="memo">Mémo</a></nav>
-</div></header>
-<main id="app"></main>
-<footer><div class="wrap" style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between">
-<span>Entreprise, chiffres et personnes du cas pratique sont fictifs. Ta progression est enregistrée sur cet appareil.</span>
-<span style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn o" id="exp" style="color:var(--ink)">Sauvegarder ma progression</button><label class="btn o" style="color:var(--ink);margin:0;font-weight:600">Restaurer<input type="file" id="imp" accept=".json,application/json" hidden></label></span>
-</div><div class="wrap saved" id="bk"></div></footer>
+<div class="shell">
+  <aside class="side">
+    <div class="brand"><span class="lg">fx</span><span>Atelier Excel & Power BI<small>Cas Rhôna Distribution</small></span></div>
+    <nav class="nav" id="sidenav"></nav>
+    <div class="syncbox" id="syncbox"></div>
+  </aside>
+  <div>
+    <header class="topbar"><div class="brand"><span class="lg">fx</span><span>Atelier<small>Excel & Power BI</small></span></div><span class="small mute" id="topsync"></span></header>
+    <main id="app"></main>
+  </div>
+</div>
+<nav class="tabbar" id="tabbar" aria-label="Navigation"></nav>
 <script src="content.js"></script>
+<script src="firebase-config.js" onerror="window.FIREBASE_CONFIG=null"></script>
 <script>
 {
 const app = document.getElementById('app');
 const pad = n => String(n).padStart(2, '0');
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let S = {notions:{}, quiz:{}, steps:{}, journal:{}, evals:{}, done:{}, corrige:{}};
-let saveTimer = null, tab = {};
+const EMPTY = () => ({notions:{}, quiz:{}, steps:{}, journal:{}, evals:{}, done:{}, corrige:{}, updatedAt:0});
 const LS = 'atelier-rhona-v1';
-try { const l = localStorage.getItem(LS); if (l) S = Object.assign(S, JSON.parse(l)); } catch (e) {}
+const IN_CLAUDE = !!(window.claude && typeof window.claude.use === 'function');
+let S = EMPTY(), ui = {tab:{}, open:{}, q:{}, memo:'Tout'}, remote = null, sync = {mode:'local', user:null, msg:''}, saveT = null;
+try { const l = localStorage.getItem(LS); if (l) S = Object.assign(EMPTY(), JSON.parse(l)); } catch (e) {}
 
-function save() {
+const ICON = {
+  home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>',
+  book:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h11a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"/><path d="M4 17a3 3 0 0 1 3-3h11"/></svg>',
+  memo:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18M9 3v18"/></svg>',
+  user:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>',
+  chev:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>',
+  lock:'<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#7a5c00" stroke-width="2" stroke-linecap="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>'
+};
+
+/* ---------- état & synchro ---------- */
+function persist() {
+  S.updatedAt = Date.now();
   try { localStorage.setItem(LS, JSON.stringify(S)); } catch (e) {}
-  clearTimeout(saveTimer);
-  const el = document.querySelector('.saved'); if (el) el.textContent = 'Enregistrement…';
-  saveTimer = setTimeout(async () => {
-    const el2 = document.querySelector('.saved'); if (el2) el2.textContent = 'Enregistré';
+  clearTimeout(saveT); setSaved('Enregistrement…');
+  saveT = setTimeout(async () => {
+    if (remote) { try { await remote.save(JSON.parse(JSON.stringify(S))); setSaved('Synchronisé'); } catch (e) { setSaved('Enregistré sur cet appareil'); } }
+    else setSaved('Enregistré sur cet appareil');
   }, 700);
 }
+function setSaved(t) { document.querySelectorAll('.saved').forEach(e => e.textContent = t); }
+function adopt(d) {
+  if (!d || (d.updatedAt || 0) <= (S.updatedAt || 0)) return false;
+  S = Object.assign(EMPTY(), d); try { localStorage.setItem(LS, JSON.stringify(S)); } catch (e) {}
+  const a = document.activeElement; if (!(a && a.tagName === 'TEXTAREA')) render(true);
+  return true;
+}
+function syncLabel() {
+  if (sync.mode === 'claude') return '<span class="dot ok"></span>Synchronisé avec ton compte Claude';
+  if (sync.mode === 'firebase' && sync.user) return '<span class="dot ok"></span>Synchronisé · ' + esc(sync.user);
+  if (sync.mode === 'firebase') return '<span class="dot warn"></span>Non connecté · <a href="#profil">se connecter</a>';
+  return '<span class="dot"></span>Enregistré sur cet appareil';
+}
+function paintSync() {
+  document.getElementById('syncbox').innerHTML = syncLabel();
+  document.getElementById('topsync').innerHTML = sync.mode === 'local' ? '' : syncLabel().replace(/ · .*$/, '').replace('Synchronisé avec ton compte Claude', 'Synchronisé');
+}
+
+/* ---------- helpers progression ---------- */
 const key = n => 's' + pad(n);
 const ready = n => PROGRAMME[n-1] && PROGRAMME[n-1].ready && CONTENT[key(n)];
 function status(n) {
   if (!ready(n)) return 'venir';
-  const k = key(n);
-  if (S.done[k]) return 'fait';
-  const any = Object.keys(S.notions[k]||{}).length || Object.keys(S.steps[k]||{}).length || Object.keys(S.quiz[k]||{}).length;
-  return any ? 'cours' : 'faire';
+  const k = key(n); if (S.done[k]) return 'fait';
+  return (Object.keys(S.notions[k]||{}).length || Object.keys(S.steps[k]||{}).length || Object.keys(S.quiz[k]||{}).length) ? 'cours' : 'faire';
 }
-const LBL = {fait:'Fait', cours:'En cours', faire:'À faire', venir:'À venir'};
-function current() {
-  for (const p of PROGRAMME) if (ready(p.n) && !S.done[key(p.n)]) return p.n;
-  let last = 1; PROGRAMME.forEach(p => { if (ready(p.n)) last = p.n; }); return last;
-}
-function weekStart(d) { const x = new Date(d); const day = (x.getDay() + 6) % 7; x.setHours(0,0,0,0); x.setDate(x.getDate() - day); return x; }
-function thisWeek() {
-  const ws = weekStart(new Date()).getTime();
-  return Object.entries(S.done).filter(([k, d]) => weekStart(new Date(d)).getTime() === ws).sort((a,b) => a[1] < b[1] ? -1 : 1);
-}
-const fmtDate = d => new Date(d).toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long'});
+const LBL = {fait:'Faite', cours:'En cours', faire:'À faire', venir:'À venir'};
+function current() { for (const p of PROGRAMME) if (ready(p.n) && !S.done[key(p.n)]) return p.n; let l = 1; PROGRAMME.forEach(p => { if (ready(p.n)) l = p.n; }); return l; }
+function weekStart(d) { const x = new Date(d); x.setHours(0,0,0,0); x.setDate(x.getDate() - (x.getDay() + 6) % 7); return x.getTime(); }
+const thisWeek = () => Object.entries(S.done).filter(([, d]) => weekStart(d) === weekStart(new Date())).sort((a, b) => a[1] < b[1] ? -1 : 1);
+const fmt = d => new Date(d).toLocaleDateString('fr-FR', {weekday:'short', day:'numeric', month:'short'});
+const cnt = (k, c) => ({not: c.cours.filter(x => (S.notions[k]||{})[x.id]).length, nn: c.cours.length, st: c.cas.etapes.filter(e => (S.steps[k]||{})[e.k]).length, ns: c.cas.etapes.length, q: Object.keys(S.quiz[k]||{}).length});
 
-function viewHome() {
-  const cur = current(), p = PROGRAMME[cur-1], wk = thisWeek();
-  const nDone = Object.keys(S.done).length;
+/* ---------- vues ---------- */
+function vHome() {
+  const cur = current(), p = PROGRAMME[cur-1], c = CONTENT[key(cur)], wk = thisWeek(), nd = Object.keys(S.done).length;
+  const k = key(cur), m = c ? cnt(k, c) : null;
   const nNot = Object.values(S.notions).reduce((a, o) => a + Object.values(o).filter(Boolean).length, 0);
-  let qa = 0, qt = 0;
-  Object.entries(S.quiz).forEach(([k, o]) => { const c = CONTENT[k]; if (!c) return; Object.entries(o).forEach(([i, v]) => { qt++; if (c.quiz[i] && c.quiz[i].a === v) qa++; }); });
-  const cell = i => { const w = wk[i]; return w ? `<div class="ok"><span>Séance ${i+1} de la semaine</span><b>S${esc(w[0].slice(1))}</b><span>faite ${esc(fmtDate(w[1]))}</span></div>` : `<div><span>Séance ${i+1} de la semaine</span><b>—</b><span>à faire quand tu veux</span></div>`; };
-  const groups = [['Excel','Excel : les fondamentaux du contrôleur'],['Power Query','Le pont entre Excel et Power BI'],['Power BI','Power BI'],['Synthèse','Synthèse et portfolio']];
-  app.innerHTML = `
-  <div class="band"><div class="wrap hero">
-    <div>
-      <p class="eyebrow">${S.done[key(cur)] ? `Séance S${pad(cur)} terminée · demande la suivante à Claude` : `Prochaine séance · S${pad(cur)} · ${esc(p.tool)}`}</p>
-      <h1>${esc(p.title)}</h1>
-      <p class="m">${esc(p.mission)}. D'abord le cours, puis le cas pratique dans Excel, puis le corrigé.</p>
-      <div class="btns"><a class="btn y" href="#s${pad(cur)}" data-go="cours">Commencer le cours</a><a class="btn o" href="#s${pad(cur)}" data-go="cas">Aller au cas pratique</a></div>
-    </div>
-    <div class="sheet">
-      <div class="lbl">Cette semaine : objectif 2 séances, jours libres</div>
-      <div class="week">${cell(0)}${cell(1)}</div>
-      <div class="lbl">Progression sur les 16 séances</div>
-      <div class="strip">${PROGRAMME.map(q => { const s = status(q.n); const c = s === 'fait' ? 'done' : q.n === cur ? 'cur' : ready(q.n) ? 'ready' : ''; return ready(q.n) ? `<a class="${c} ready" href="#s${pad(q.n)}" aria-label="Séance ${q.n} : ${LBL[s]}">${q.n}</a>` : `<a class="${c}" aria-label="Séance ${q.n} à venir">${q.n}</a>`; }).join('')}</div>
-      <div class="legend"><span>Vert : faite</span><span>Jaune : en cours</span><span>Gris : à venir</span></div>
-      <div class="stats"><div><b>${nDone}/16</b><span>séances faites</span></div><div><b>${nNot}</b><span>notions comprises</span></div><div><b>${qt ? Math.round(qa/qt*100) + ' %' : '—'}</b><span>réussite aux quiz</span></div></div>
-    </div>
-  </div></div>
-  <section class="pad"><div class="wrap">
-    <h2>Le programme</h2>
-    <p class="note">Ta mission : construire le pilotage de gestion de Rhôna Distribution, PME lyonnaise de 18 salariés qui équipe cafés, hôtels et restaurants. Chaque séance = un cours, puis une demande du DAF à traiter. Les séances s'ajoutent au fur et à mesure, toujours avec une d'avance.</p>
-    ${groups.map(([t, lab]) => `<div class="grp">${lab}</div><div class="prog">${PROGRAMME.filter(q => q.tool === t || (t === 'Power Query' && q.tool === 'Power Query')).map(q => { const s = status(q.n); const inner = `<span class="n">S${pad(q.n)}</span><span class="chip tool">${esc(q.tool)}</span><span><span class="t">${esc(q.title)}</span><br><span class="d">${esc(q.mission)} · ${esc(q.skills.join(', '))}</span></span><span class="chip st-${s}">${LBL[s]}</span>`; return ready(q.n) ? `<a class="row" href="#s${pad(q.n)}">${inner}</a>` : `<div class="row">${inner}</div>`; }).join('')}</div>`).join('')}
-  </div></section>`;
+  let qa = 0, qt = 0; Object.entries(S.quiz).forEach(([kk, o]) => { const cc = CONTENT[kk]; if (cc) Object.entries(o).forEach(([i, v]) => { qt++; if (cc.quiz[i] && cc.quiz[i].a === v) qa++; }); });
+  const R = 48, C = 2 * Math.PI * R, pct = nd / 16;
+  const h = new Date().getHours(), hello = h < 18 ? 'Bonjour' : 'Bonsoir';
+  const isDone = !!S.done[k];
+  return `<div class="hello"><div><p class="mute small" style="margin:0">${esc(new Date().toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long'}))}</p><h1>${hello} Ayemane</h1></div></div>
+  <div class="grid g2">
+    <section class="hero">
+      <div class="lab">${isDone ? 'Séance terminée · la suivante arrive bientôt' : 'Ta prochaine séance · S' + pad(cur) + ' · ' + esc(p.tool)}</div>
+      <h1>${esc(p.title)}</h1><p>${esc(p.mission)}.</p>
+      ${m ? `<div class="pills"><span class="pill ${m.not===m.nn?'done':''}">Cours ${m.not}/${m.nn}</span><span class="pill ${m.q===c.quiz.length?'done':''}">Quiz ${m.q}/${c.quiz.length}</span><span class="pill ${m.st===m.ns?'done':''}">Cas ${m.st}/${m.ns}</span><span class="pill ${isDone?'done':''}">Bilan</span></div>` : ''}
+      <div class="row2"><a class="btn y" href="#s${pad(cur)}">${m && (m.not || m.st) ? 'Continuer' : 'Commencer le cours'}</a>${isDone ? '' : `<a class="btn" style="background:rgba(255,255,255,.14);color:#fff" href="#s${pad(cur)}" data-go="cas">Cas pratique</a>`}</div>
+    </section>
+    <section class="card">
+      <div class="ringwrap"><div class="ring"><svg viewBox="0 0 112 112"><circle cx="56" cy="56" r="${R}" fill="none" stroke="var(--line)" stroke-width="10"/><circle cx="56" cy="56" r="${R}" fill="none" stroke="var(--g2)" stroke-width="10" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-pct)}" style="transition:stroke-dashoffset .6s"/></svg><b><span>${nd}/16<small>séances</small></span></b></div>
+      <div style="flex:1"><h3>Cette semaine</h3><p class="small mute" style="margin:2px 0 0">Objectif : 2 séances, jours libres</p><div class="week">${[0,1].map(i => wk[i] ? `<span class="ok">✓ S${esc(wk[i][0].slice(1))} · ${esc(fmt(wk[i][1]))}</span>` : `<span>Séance ${i+1}</span>`).join('')}</div></div></div>
+      <div class="strip" aria-label="Progression sur 16 séances">${PROGRAMME.map(q => { const s = status(q.n); return `<i class="${s==='fait'?'done':q.n===cur?'cur':ready(q.n)?'ready':''}" title="S${pad(q.n)} · ${LBL[s]}">${q.n}</i>`; }).join('')}</div>
+      <div class="stats"><div class="stat"><b>${nNot}</b><span>notions comprises</span></div><div class="stat"><b>${qt ? Math.round(qa/qt*100) + '%' : '—'}</b><span>réussite quiz</span></div><div class="stat"><b>${wk.length}/2</b><span>cette semaine</span></div></div>
+    </section>
+  </div>
+  <div class="sec"><h2>Le programme</h2><span class="small mute">16 séances · une d'avance</span></div>
+  <p class="note">Tu es assistant contrôleur de gestion chez Rhôna Distribution, PME lyonnaise qui équipe cafés, hôtels et restaurants. Chaque séance : un cours, puis une demande du DAF à traiter dans Excel.</p>
+  ${[['Excel','Excel : les fondamentaux du contrôleur'],['Power Query','Le pont vers Power BI'],['Power BI','Power BI'],['Synthèse','Synthèse et portfolio']].map(([t, lab]) => `<div class="phase">${lab}</div><div class="list">${PROGRAMME.filter(q => q.tool === t).map(q => { const s = status(q.n); const inner = `<span class="num">${s==='fait'?'✓':pad(q.n)}</span><span><span class="t">${esc(q.title)}</span><span class="d" style="display:block">${esc(q.skills.join(' · '))}</span></span><span class="tag ${s}">${LBL[s]}</span>`; return ready(q.n) ? `<a class="item ${s}" href="#s${pad(q.n)}">${inner}</a>` : `<div class="item venir">${inner}</div>`; }).join('')}</div>`).join('')}`;
 }
 
-function viewSeance(n) {
+function vSeance(n) {
   const k = key(n), p = PROGRAMME[n-1], c = CONTENT[k];
-  if (!ready(n)) { app.innerHTML = `<section class="pad"><div class="wrap"><h2>S${pad(n)} · ${esc(p ? p.title : '')}</h2><p class="empty">Cette séance arrive bientôt. Demande à Claude : « prépare la séance ${n} ».</p><a class="btn g" href="#accueil">Retour au tableau de bord</a></div></section>`; return; }
-  const t = tab[k] || 'cours';
-  app.innerHTML = `
-  <div class="shead"><div class="wrap">
-    <p class="eyebrow" style="color:var(--mute)">Séance ${n} sur 16 · ${esc(p.tool)} · 1h30 environ · <span class="chip st-${status(n)}">${LBL[status(n)]}</span></p>
-    <h1 style="font-size:clamp(30px,3.6vw,44px)">${esc(p.title)}</h1>
-    <ul class="obj">${c.objectifs.map(o => `<li>${esc(o)}</li>`).join('')}</ul>
-    <div class="tabs" role="tablist">${[['cours','1 · Cours'],['cas','2 · Cas pratique'],['corrige','3 · Corrigé'],['bilan','4 · Bilan']].map(([id, l]) => `<button role="tab" aria-selected="${t===id}" class="${t===id?'on':''}" data-tab="${id}">${l}</button>`).join('')}</div>
-  </div></div>
-  <div class="wrap" id="pane"></div>`;
-  const pane = document.getElementById('pane');
+  if (!p) return `<p class="empty">Séance introuvable.</p>`;
+  if (!ready(n)) return `<a class="back" href="#accueil">← Tableau de bord</a><div class="card"><h2>S${pad(n)} · ${esc(p.title)}</h2><p class="mute" style="margin-top:8px">Cette séance arrive bientôt. Demande à Claude : « prépare la séance ${n} ».</p></div>`;
+  const t = ui.tab[k] || 'cours', m = cnt(k, c);
+  let body = '';
   if (t === 'cours') {
-    const no = S.notions[k] || {}, nb = c.cours.filter(x => no[x.id]).length;
-    pane.innerHTML = `<div class="cours"><nav class="toc" aria-label="Notions"><div class="note" style="padding:0 10px">${nb} / ${c.cours.length} notions comprises</div><div class="bar"><span style="width:${nb/c.cours.length*100}%"></span></div>${c.cours.map(x => `<a href="#s${pad(n)}" data-jump="${x.id}" class="${no[x.id]?'ok':''}"><i>${no[x.id]?'✓':''}</i><span>${esc(x.t)}</span></a>`).join('')}<a href="#s${pad(n)}" data-jump="quiz"><i>?</i><span>Quiz de fin de cours</span></a></nav>
-    <div>${c.cours.map(x => `<article class="notion" id="n-${x.id}"><header><h3>${esc(x.t)}</h3><span class="dur">${x.d} min</span></header>${x.html}<button class="done-btn ${no[x.id]?'ok':''}" data-notion="${x.id}">${no[x.id] ? '✓ Compris' : "J'ai compris cette notion"}</button></article>`).join('')}
-    <div class="quiz" id="n-quiz"><h3>Quiz : vérifie que tu as compris</h3><p class="note">Réponds avant de passer au cas pratique. Tu peux recommencer en cliquant sur une autre réponse.</p>${c.quiz.map((q, i) => { const a = (S.quiz[k]||{})[i]; return `<div class="q"><p>${i+1}. ${esc(q.q)}</p><div class="opts">${q.o.map((o, j) => `<button data-q="${i}" data-o="${j}" class="${a===undefined?'':j===q.a&&a!==undefined?'right':j===a?'wrong':''}">${esc(o)}</button>`).join('')}</div>${a!==undefined?`<div class="ex">${a===q.a?'Bonne réponse. ':'Pas tout à fait. '}${esc(q.e)}</div>`:''}</div>`; }).join('')}
-    <div class="btns"><button class="btn g" data-tab="cas">Passer au cas pratique</button></div></div></div></div>`;
+    const no = S.notions[k] || {};
+    if (ui.open[k] === undefined) { const f = c.cours.find(x => !no[x.id]); ui.open[k] = f ? f.id : null; }
+    body = `<div class="row2" style="align-items:center;margin-bottom:12px"><div class="bar" style="flex:1"><i style="width:${m.not/m.nn*100}%"></i></div><span class="small mute" style="font-weight:700">${m.not}/${m.nn} notions</span></div>
+    ${c.cours.map((x, i) => `<div class="acc ${no[x.id]?'ok':''} ${ui.open[k]===x.id?'open':''}" id="n-${x.id}"><button data-acc="${x.id}" aria-expanded="${ui.open[k]===x.id}"><span class="ck">${no[x.id]?'✓':i+1}</span><span class="ti">${esc(x.t.replace(/^\d+\.\s*/, ''))}</span><span class="du">${x.d} min</span><span class="ch">${ICON.chev}</span></button><div class="body">${ui.open[k]===x.id ? x.html : ''}<button class="btn ${no[x.id]?'ghost':'g'} donebtn" data-notion="${x.id}">${no[x.id] ? '✓ Comprise · revoir plus tard' : "J'ai compris, notion suivante"}</button></div></div>`).join('')}
+    ${quiz(k, c)}`;
   }
   if (t === 'cas') {
     const st = S.steps[k] || {};
-    pane.innerHTML = `<div class="cas"><div><h2>La demande du DAF</h2><p>${esc(c.cas.brief)}</p><blockquote>${esc(c.cas.quote)}</blockquote>
-    <h3 style="margin-top:24px">Les étapes (coche au fur et à mesure)</h3><ol class="steps">${c.cas.etapes.map(e => `<li class="${st[e.k]?'ok':''}"><button data-step="${e.k}" aria-pressed="${!!st[e.k]}">${st[e.k]?'✓':e.k}</button><span><b>${esc(e.t)}</b><small>${esc(e.x)}</small></span><span class="min">${e.d} min</span></li>`).join('')}</ol>
-    <p class="note">L'énoncé détaillé (questions, colonnes à créer, tableaux à construire) est dans l'onglet bleu « S1 Énoncé » du classeur.</p></div>
-    <aside class="side"><h3>Le classeur de la séance</h3><p style="font-size:15px">Tout est dedans : l'énoncé, les données et le corrigé complet.</p><a class="btn g" href="${esc(c.file)}" download="Rhona_S${pad(n)}.xlsx">Télécharger Rhona_S${pad(n)}.xlsx</a>
-    <ol style="font-size:15px"><li><b>Bleu</b> : l'énoncé</li><li><b>Vert</b> : tes données, tu travailles ici</li><li><b>Orange</b> : le corrigé, à ouvrir à la fin</li></ol>
-    <p class="note">Compatible Excel 2013. Formules en français, séparateur « ; ».</p></aside></div>`;
+    body = `<div class="grid g2"><div><div class="card"><h3>La demande du DAF</h3><p style="margin-top:8px">${esc(c.cas.brief)}</p><blockquote>${esc(c.cas.quote)}</blockquote></div>
+    <div class="sec" style="margin-top:20px"><h3>Les étapes</h3><span class="small mute">${m.st}/${m.ns} faites</span></div>
+    <div class="steps">${c.cas.etapes.map(e => `<div class="step ${st[e.k]?'ok':''}"><button data-step="${e.k}" aria-pressed="${!!st[e.k]}" aria-label="Étape ${e.k}">${st[e.k]?'✓':e.k}</button><span><b>${esc(e.t)}</b><small>${esc(e.x)}</small></span><span class="mn">${e.d} min</span></div>`).join('')}</div>
+    <p class="note">L'énoncé détaillé est dans l'onglet bleu « S${n} Énoncé » du classeur.</p></div>
+    <div class="card" style="align-self:start"><h3>Le classeur de la séance</h3><p class="small mute" style="margin:6px 0 14px">Énoncé (bleu), tes données (vert) et le corrigé complet (orange). Compatible Excel 2013.</p>
+    ${IN_CLAUDE ? `<button class="btn g full" id="dl">Télécharger Rhona_S${pad(n)}.xlsx</button>` : `<a class="btn g full" href="${esc(c.file)}" download="Rhona_S${pad(n)}.xlsx">Télécharger Rhona_S${pad(n)}.xlsx</a>`}<p class="saved" id="dlmsg"></p></div></div>`;
   }
-  if (t === 'corrige') {
-    pane.innerHTML = S.corrige[k] ? `<div style="padding:32px 0;max-width:900px">${c.corrige}</div>` : `<div class="lock"><h3>Le corrigé est masqué</h3><p class="note">Essaie d'abord seul. Si tu bloques plus de 10 minutes sur une question, tu peux l'ouvrir.</p><button class="btn g" id="openCorr">J'ai terminé, afficher le corrigé</button></div>`;
-  }
+  if (t === 'corrige') body = S.corrige[k] ? `<div class="card" style="max-width:900px">${c.corrige}</div>` : `<div class="card lock"><div class="ic">${ICON.lock}</div><h3>Le corrigé est masqué</h3><p class="mute" style="margin:8px auto 16px;max-width:42ch">Essaie d'abord seul. Si tu bloques plus de 10 minutes sur une question, tu peux l'ouvrir.</p><button class="btn g" id="openCorr">J'ai terminé, afficher le corrigé</button></div>`;
   if (t === 'bilan') {
     const j = S.journal[k] || {}, ev = S.evals[k] || [];
-    pane.innerHTML = `<div class="bilan"><div><h2>Journal de séance</h2><p class="note">Trois lignes suffisent. C'est ce qui te permettra de mesurer ta progression, et de raconter ton parcours en entretien.</p>
-    <label for="j1">Ce que j'ai fait</label><textarea id="j1" data-j="fait">${esc(j.fait)}</textarea>
-    <label for="j2">Ce qui m'a bloqué</label><textarea id="j2" data-j="bloque">${esc(j.bloque)}</textarea>
-    <label for="j3">Ce que j'ai appris</label><textarea id="j3" data-j="appris">${esc(j.appris)}</textarea><p class="saved"></p></div>
-    <div><h2>Auto-évaluation</h2><p class="note">De 1 (pas du tout) à 5 (je sais le faire seul).</p>${c.autoeval.map((a, i) => `<div class="ev"><span>${esc(a)}</span><span class="sc">${[1,2,3,4,5].map(v => `<button data-ev="${i}" data-v="${v}" class="${ev[i]===v?'on':''}" aria-label="${v} sur 5">${v}</button>`).join('')}</span></div>`).join('')}
-    <div style="margin-top:24px">${S.done[k] ? `<p><b>Séance terminée le ${esc(fmtDate(S.done[k]))}.</b></p><button class="btn o" style="color:var(--mute)" id="undo">Annuler « séance faite »</button>` : `<button class="btn g" id="finish">Marquer la séance comme faite</button>`}</div></div></div>`;
+    body = `<div class="grid g2"><div class="card"><h3>Journal de séance</h3><p class="small mute" style="margin-top:4px">Trois lignes suffisent : c'est ta trace de progression, utile aussi en entretien.</p>
+    <label class="l" for="j1">Ce que j'ai fait</label><textarea id="j1" data-j="fait">${esc(j.fait)}</textarea>
+    <label class="l" for="j2">Ce qui m'a bloqué</label><textarea id="j2" data-j="bloque">${esc(j.bloque)}</textarea>
+    <label class="l" for="j3">Ce que j'ai appris</label><textarea id="j3" data-j="appris">${esc(j.appris)}</textarea><p class="saved"></p></div>
+    <div class="card"><h3>Auto-évaluation</h3><p class="small mute" style="margin-top:4px">De 1 (pas du tout) à 5 (je sais le faire seul).</p>${c.autoeval.map((a, i) => `<div class="ev"><p>${esc(a)}</p><div class="sc">${[1,2,3,4,5].map(v => `<button data-ev="${i}" data-v="${v}" class="${ev[i]===v?'on':''}" aria-label="${v} sur 5">${v}</button>`).join('')}</div></div>`).join('')}
+    <div style="margin-top:18px">${S.done[k] ? `<p><b>Séance terminée le ${esc(fmt(S.done[k]))}.</b></p><button class="btn ghost" id="undo">Annuler « séance faite »</button>` : `<button class="btn g full" id="finish">Marquer la séance comme faite</button>`}</div></div></div>`;
   }
+  return `<a class="back" href="#accueil">← Tableau de bord</a>
+  <div class="shead"><div class="lab">Séance ${n} sur 16 · ${esc(p.tool)} · 1h30 · ${LBL[status(n)]}</div><h1>${esc(p.title)}</h1>
+  <details class="objd" ${matchMedia('(min-width:900px)').matches ? 'open' : ''}><summary>Objectifs de la séance (${c.objectifs.length})</summary><div class="objs">${c.objectifs.map(o => `<span>${esc(o)}</span>`).join('')}</div></details></div>
+  <div class="seg" role="tablist">${[['cours','Cours',`${m.not}/${m.nn}`],['cas','Cas<span class="lg-only"> pratique</span>',`${m.st}/${m.ns}`],['corrige','Corrigé',S.corrige[k]?'ouvert':'masqué'],['bilan','Bilan',S.done[k]?'fait':'']].map(([id, l, s]) => `<button role="tab" aria-selected="${t===id}" class="${t===id?'on':''}" data-tab="${id}">${l}<small>${s}</small></button>`).join('')}</div>
+  ${body}`;
+}
+function quiz(k, c) {
+  const ans = S.quiz[k] || {}, i = Math.min(ui.q[k] || 0, c.quiz.length - 1), q = c.quiz[i], a = ans[i];
+  const score = Object.entries(ans).filter(([j, v]) => c.quiz[j] && c.quiz[j].a === v).length;
+  return `<div class="quiz" id="n-quiz"><div class="qtop"><h3>Quiz de fin de cours</h3><span class="small mute" style="font-weight:700">${score}/${c.quiz.length} bonnes</span></div>
+  <div class="qdots">${c.quiz.map((qq, j) => `<i class="${j===i?'c':ans[j]===undefined?'':ans[j]===qq.a?'r':'w'}"></i>`).join('')}</div>
+  <div class="qq">${i+1}. ${esc(q.q)}</div>
+  <div class="opts">${q.o.map((o, j) => `<button data-q="${i}" data-o="${j}" class="${a===undefined?'':j===q.a?'right':j===a?'wrong':''}">${esc(o)}</button>`).join('')}</div>
+  ${a !== undefined ? `<div class="ex"><b>${a===q.a?'Bonne réponse.':'Pas tout à fait.'}</b> ${esc(q.e)}</div>` : ''}
+  <div class="qnav"><button class="btn ghost" data-qn="-1" ${i===0?'disabled style="opacity:.4"':''}>Précédente</button>${i < c.quiz.length - 1 ? `<button class="btn g" data-qn="1">Question suivante</button>` : `<button class="btn y" data-tab="cas">Passer au cas pratique</button>`}</div></div>`;
 }
 
-function viewMemo() {
+function vMemo() {
   const rows = []; PROGRAMME.forEach(p => { const c = CONTENT[key(p.n)]; if (ready(p.n) && c.memo) c.memo.forEach(m => rows.push([...m, p.n])); });
-  app.innerHTML = `<section class="pad"><div class="wrap"><h2>Fiche mémo</h2><p class="note">Toutes les formules et notions vues jusqu'ici. Elle grossit à chaque séance : relis-la avant un entretien.</p>
-  <input type="search" id="q" placeholder="Rechercher une fonction, une notion…" aria-label="Rechercher">
-  <div class="scroll"><table class="plain memo"><thead><tr><th>Thème</th><th>Formule</th><th>À retenir</th><th>Séance</th></tr></thead><tbody id="mb"></tbody></table></div></div></section>`;
-  const draw = f => { const q = (f||'').toLowerCase(); document.getElementById('mb').innerHTML = rows.filter(r => r.join(' ').toLowerCase().includes(q)).map(r => `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td>S${pad(r[3])}</td></tr>`).join('') || '<tr><td colspan="4" class="empty">Aucun résultat.</td></tr>'; };
-  draw(''); document.getElementById('q').addEventListener('input', e => draw(e.target.value));
+  const themes = ['Tout', ...new Set(rows.map(r => r[0]))];
+  return `<h1 style="margin-bottom:6px">Fiche mémo</h1><p class="mute">Toutes les formules et notions vues. Elle grossit à chaque séance : relis-la avant un entretien.</p>
+  <input type="search" id="q" placeholder="Rechercher : RECHERCHEV, marge, $…" aria-label="Rechercher" style="margin:10px 0">
+  <div class="chips">${themes.map(t => `<button data-th="${esc(t)}" class="${ui.memo===t?'on':''}">${esc(t)}</button>`).join('')}</div>
+  <div class="memo" id="mb"></div>`;
+}
+function drawMemo() {
+  const rows = []; PROGRAMME.forEach(p => { const c = CONTENT[key(p.n)]; if (ready(p.n) && c.memo) c.memo.forEach(m => rows.push([...m, p.n])); });
+  const q = ((document.getElementById('q') || {}).value || '').toLowerCase();
+  const f = rows.filter(r => (ui.memo === 'Tout' || r[0] === ui.memo) && r.join(' ').toLowerCase().includes(q));
+  document.getElementById('mb').innerHTML = f.map(r => `<div class="mc"><span class="th">${esc(r[0])} · S${pad(r[3])}</span><code>${esc(r[1])}</code><p>${esc(r[2])}</p></div>`).join('') || '<p class="empty">Aucun résultat.</p>';
 }
 
-function route() {
-  const h = (location.hash || '#accueil').slice(1);
-  const m = h.match(/^s(\d\d)$/);
-  document.getElementById('navSeance').setAttribute('href', '#s' + pad(current()));
-  document.querySelectorAll('nav.main a').forEach(a => a.classList.toggle('on', (a.dataset.nav === 'accueil' && !m && h !== 'memo') || (a.dataset.nav === 'seance' && !!m) || (a.dataset.nav === 'memo' && h === 'memo')));
-  if (m) viewSeance(+m[1]); else if (h === 'memo') viewMemo(); else viewHome();
+function vProfil() {
+  let acc = '';
+  if (sync.mode === 'claude') acc = `<p>${syncLabel()}</p><p class="small mute">Ta progression suit ton compte Claude, sur tous tes appareils.</p>`;
+  else if (sync.mode === 'firebase' && sync.user) acc = `<p>${syncLabel()}</p><p class="small mute">Connecte-toi avec le même compte Google sur ton PC et ton téléphone : ta progression est la même partout.</p><button class="btn ghost" id="logout">Se déconnecter</button>`;
+  else if (sync.mode === 'firebase') acc = `<p class="mute">Connecte-toi avec Google pour retrouver ta progression sur ton PC et ton téléphone.</p><button class="btn g" id="login">Se connecter avec Google</button><p class="saved">${esc(sync.msg)}</p>`;
+  else acc = `<p>${syncLabel()}</p><p class="small mute">La synchronisation en ligne n'est pas encore activée sur cette version.</p>`;
+  return `<h1 style="margin-bottom:16px">Profil et synchronisation</h1><div class="grid g2"><div class="card"><h3>Ma progression en ligne</h3><div style="margin-top:10px">${acc}</div></div>
+  <div class="card"><h3>Sauvegarde manuelle</h3><p class="small mute" style="margin:6px 0 14px">Un fichier de sauvegarde, au cas où.</p><div class="row2">${IN_CLAUDE ? '<span class="small mute">Non nécessaire ici : tout est synchronisé.</span>' : `<button class="btn ghost" id="exp">Sauvegarder</button><label class="btn ghost" style="margin:0">Restaurer<input type="file" id="imp" accept=".json,application/json" hidden></label>`}</div><p class="saved" id="bk"></p></div></div>
+  <p class="note" style="margin-top:20px">Entreprise, chiffres et personnes du cas pratique sont fictifs.</p>`;
 }
-function rerender(keepScroll) { const y = scrollY; route(); if (keepScroll) scrollTo(0, y); }
-const curN = () => { const m = (location.hash||'').match(/^#s(\d\d)$/); return m ? +m[1] : 0; };
+
+/* ---------- routeur ---------- */
+const NAV = [['accueil','Accueil','home'],['seance','Séance','book'],['memo','Mémo','memo'],['profil','Profil','user']];
+function render(keep) {
+  const y = scrollY, h = (location.hash || '#accueil').slice(1), m = h.match(/^s(\d\d)$/);
+  const act = m ? 'seance' : (['memo','profil'].includes(h) ? h : 'accueil');
+  const href = id => id === 'seance' ? '#s' + pad(current()) : '#' + id;
+  const nav = NAV.map(([id, l, ic]) => `<a href="${href(id)}" class="${act===id?'on':''}" ${act===id?'aria-current="page"':''}>${ICON[ic]}<span>${l}</span></a>`).join('');
+  document.getElementById('sidenav').innerHTML = nav; document.getElementById('tabbar').innerHTML = nav;
+  app.innerHTML = '<div class="view">' + (m ? vSeance(+m[1]) : act === 'memo' ? vMemo() : act === 'profil' ? vProfil() : vHome()) + '</div>';
+  if (act === 'memo') { drawMemo(); document.getElementById('q').addEventListener('input', drawMemo); }
+  paintSync();
+  if (keep) scrollTo(0, y);
+}
+const curK = () => { const m = (location.hash||'').match(/^#s(\d\d)$/); return m ? {n:+m[1], k:'s'+m[1]} : null; };
 
 document.addEventListener('click', async e => {
-  const go = e.target.closest('[data-go]'); if (go) { tab['s' + go.getAttribute('href').slice(2)] = go.dataset.go; }
-  const n = curN(), k = key(n);
-  const tb = e.target.closest('[data-tab]'); if (tb && n) { tab[k] = tb.dataset.tab; rerender(); scrollTo(0, document.querySelector('.tabs').offsetTop - 70); return; }
-  const j = e.target.closest('[data-jump]'); if (j) { e.preventDefault(); const t = document.getElementById('n-' + j.dataset.jump); if (t) t.scrollIntoView({behavior:'smooth'}); return; }
-  const nb = e.target.closest('[data-notion]'); if (nb) { S.notions[k] = S.notions[k] || {}; S.notions[k][nb.dataset.notion] = !S.notions[k][nb.dataset.notion]; save(); rerender(true); return; }
-  const qb = e.target.closest('[data-q]'); if (qb) { S.quiz[k] = S.quiz[k] || {}; S.quiz[k][qb.dataset.q] = +qb.dataset.o; save(); rerender(true); return; }
-  const sb = e.target.closest('[data-step]'); if (sb) { S.steps[k] = S.steps[k] || {}; S.steps[k][sb.dataset.step] = !S.steps[k][sb.dataset.step]; save(); rerender(true); return; }
-  const eb = e.target.closest('[data-ev]'); if (eb) { S.evals[k] = (S.evals[k] || []).slice(); S.evals[k][+eb.dataset.ev] = +eb.dataset.v; save(); rerender(true); return; }
-  if (e.target.id === 'openCorr') { S.corrige[k] = true; save(); rerender(true); return; }
-  if (e.target.id === 'finish') { S.done[k] = new Date().toISOString(); save(); tab = {}; location.hash = '#accueil'; return; }
-  if (e.target.id === 'undo') { delete S.done[k]; save(); rerender(true); return; }
-  if (e.target.id === 'exp') {
-    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(S, null, 1)], {type:'application/json'}));
-    a.download = 'atelier-progression-' + new Date().toISOString().slice(0,10) + '.json'; a.click();
-    document.getElementById('bk').textContent = 'Fichier de sauvegarde téléchargé. Ouvre-le avec « Restaurer » sur ton autre appareil.';
+  const g = e.target.closest('[data-go]'); if (g) ui.tab['s' + g.getAttribute('href').slice(2)] = g.dataset.go;
+  const cu = curK(), k = cu && cu.k, c = k && CONTENT[k];
+  const tb = e.target.closest('[data-tab]'); if (tb && k) { ui.tab[k] = tb.dataset.tab; render(); const s = document.querySelector('.seg'); if (s && scrollY > s.offsetTop) scrollTo(0, s.offsetTop - 60); return; }
+  const ac = e.target.closest('[data-acc]'); if (ac) { ui.open[k] = ui.open[k] === ac.dataset.acc ? null : ac.dataset.acc; render(true); const el = document.getElementById('n-' + ac.dataset.acc); if (el && ui.open[k]) el.scrollIntoView({block:'start', behavior:'smooth'}); return; }
+  const nb = e.target.closest('[data-notion]'); if (nb) { const id = nb.dataset.notion; S.notions[k] = Object.assign({}, S.notions[k]); const was = S.notions[k][id]; S.notions[k][id] = !was; persist();
+    if (!was) { const i = c.cours.findIndex(x => x.id === id), nx = c.cours.slice(i + 1).find(x => !S.notions[k][x.id]); ui.open[k] = nx ? nx.id : null; render(true); const el = document.getElementById(nx ? 'n-' + nx.id : 'n-quiz'); if (el) el.scrollIntoView({block:'start', behavior:'smooth'}); } else render(true); return; }
+  const qb = e.target.closest('[data-q]'); if (qb) { S.quiz[k] = Object.assign({}, S.quiz[k], {[qb.dataset.q]: +qb.dataset.o}); persist(); render(true); return; }
+  const qn = e.target.closest('[data-qn]'); if (qn) { ui.q[k] = Math.max(0, (ui.q[k] || 0) + (+qn.dataset.qn)); render(true); return; }
+  const sb = e.target.closest('[data-step]'); if (sb) { S.steps[k] = Object.assign({}, S.steps[k]); S.steps[k][sb.dataset.step] = !S.steps[k][sb.dataset.step]; persist(); render(true); return; }
+  const eb = e.target.closest('[data-ev]'); if (eb) { S.evals[k] = (S.evals[k] || []).slice(); S.evals[k][+eb.dataset.ev] = +eb.dataset.v; persist(); render(true); return; }
+  const th = e.target.closest('[data-th]'); if (th) { ui.memo = th.dataset.th; document.querySelectorAll('[data-th]').forEach(b => b.classList.toggle('on', b === th)); drawMemo(); return; }
+  const id = e.target.closest('button') && e.target.closest('button').id;
+  if (id === 'openCorr') { S.corrige = Object.assign({}, S.corrige, {[k]: true}); persist(); render(true); }
+  if (id === 'finish') { S.done = Object.assign({}, S.done, {[k]: new Date().toISOString()}); persist(); location.hash = '#accueil'; }
+  if (id === 'undo') { S.done = Object.assign({}, S.done); delete S.done[k]; persist(); render(true); }
+  if (id === 'login' && remote && remote.login) { try { await remote.login(); } catch (err) { sync.msg = 'Connexion impossible : ' + (err && err.code || 'réessaie'); render(true); } }
+  if (id === 'logout' && remote && remote.logout) remote.logout();
+  if (id === 'exp') { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(S)], {type:'application/json'})); a.download = 'atelier-progression-' + new Date().toISOString().slice(0,10) + '.json'; a.click(); document.getElementById('bk').textContent = 'Sauvegarde téléchargée.'; }
+  if (id === 'dl') {
+    const msg = document.getElementById('dlmsg');
+    try {
+      const b64 = (await (await fetch(c.file + '.b64.txt')).text()).trim(), bin = atob(b64), u8 = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+      const d = await claude.use('downloads'); await d.save({filename: 'Rhona_S' + pad(cu.n) + '.xlsx', data: new Blob([u8])}); msg.textContent = 'Classeur téléchargé.';
+    } catch (err) { msg.textContent = err && err.code === 'declined' ? 'Téléchargement annulé.' : 'Téléchargement impossible ici.'; }
   }
 });
 document.addEventListener('change', e => {
   if (e.target.id !== 'imp' || !e.target.files[0]) return;
   const r = new FileReader();
-  r.onload = () => { try { const d = JSON.parse(r.result); if (typeof d !== 'object' || !d.done) throw 0; S = Object.assign({notions:{}, quiz:{}, steps:{}, journal:{}, evals:{}, done:{}, corrige:{}}, d); save(); route(); document.getElementById('bk').textContent = 'Progression restaurée.'; } catch (err) { document.getElementById('bk').textContent = "Ce fichier n'est pas une sauvegarde valide."; } };
+  r.onload = () => { try { const d = JSON.parse(r.result); if (!d || !d.done) throw 0; S = Object.assign(EMPTY(), d); persist(); render(true); document.getElementById('bk').textContent = 'Progression restaurée.'; } catch (x) { document.getElementById('bk').textContent = "Ce fichier n'est pas une sauvegarde valide."; } };
   r.readAsText(e.target.files[0]);
 });
 let jt = null;
-document.addEventListener('input', e => {
-  const t = e.target.closest('[data-j]'); if (!t) return;
-  const k = key(curN()); S.journal[k] = S.journal[k] || {}; S.journal[k][t.dataset.j] = t.value;
-  clearTimeout(jt); jt = setTimeout(save, 600);
-});
-window.addEventListener('hashchange', () => { route(); scrollTo(0, 0); });
-route();
+document.addEventListener('input', e => { const t = e.target.closest('[data-j]'); if (!t) return; const k = curK().k; S.journal[k] = Object.assign({}, S.journal[k], {[t.dataset.j]: t.value}); clearTimeout(jt); jt = setTimeout(persist, 600); });
+window.addEventListener('hashchange', () => { render(); scrollTo(0, 0); });
+render();
 
-if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+/* ---------- connexion au stockage en ligne ---------- */
+async function connectClaude() {
+  const [db, user] = await Promise.all([claude.use('db'), claude.use('user')]);
+  if (!db || !user) return; const uid = await user.id(); if (!uid) return;
+  const ref = db.doc('data/users/' + uid + '/progress');
+  remote = {save: d => ref.set(d)}; sync.mode = 'claude';
+  const snap = await ref.get();
+  if (snap.exists) { if (!adopt(JSON.parse(JSON.stringify(snap.data()))) && S.updatedAt > ((snap.data() || {}).updatedAt || 0)) await ref.set(JSON.parse(JSON.stringify(S))); }
+  else if (S.updatedAt) await ref.set(JSON.parse(JSON.stringify(S)));
+  paintSync();
+}
+async function connectFirebase(cfg) {
+  const V = 'https://www.gstatic.com/firebasejs/10.12.2/';
+  const [{initializeApp}, A, F] = await Promise.all([import(V + 'firebase-app.js'), import(V + 'firebase-auth.js'), import(V + 'firebase-firestore.js')]);
+  const fa = initializeApp(cfg), auth = A.getAuth(fa), fs = F.getFirestore(fa), prov = new A.GoogleAuthProvider();
+  sync.mode = 'firebase'; let unsub = null;
+  remote = {save: null,
+    login: async () => { try { await A.signInWithPopup(auth, prov); } catch (err) { if (/popup/.test(err.code || '')) await A.signInWithRedirect(auth, prov); else throw err; } },
+    logout: () => A.signOut(auth)};
+  A.getRedirectResult(auth).catch(() => {});
+  A.onAuthStateChanged(auth, async u => {
+    if (unsub) { unsub(); unsub = null; }
+    if (!u) { sync.user = null; remote.save = null; render(true); return; }
+    sync.user = u.email || u.displayName || 'connecté';
+    const ref = F.doc(fs, 'users', u.uid);
+    remote.save = d => F.setDoc(ref, d);
+    const snap = await F.getDoc(ref);
+    if (snap.exists()) { if (!adopt(snap.data()) && S.updatedAt > (snap.data().updatedAt || 0)) await F.setDoc(ref, JSON.parse(JSON.stringify(S))); }
+    else if (S.updatedAt) await F.setDoc(ref, JSON.parse(JSON.stringify(S)));
+    unsub = F.onSnapshot(ref, s => { if (s.exists() && !s.metadata.hasPendingWrites) adopt(s.data()); });
+    render(true);
+  });
+  render(true);
+}
+(async () => {
+  try {
+    if (IN_CLAUDE) await connectClaude();
+    else {
+      if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+      const cfg = window.FIREBASE_CONFIG; if (cfg && cfg.apiKey) await connectFirebase(cfg);
+    }
+  } catch (e) { paintSync(); }
+})();
 }
 </script>
 </body>
