@@ -269,8 +269,8 @@ function adopt(d) {
 }
 function syncLabel() {
   if (sync.mode === 'claude') return '<span class="dot ok"></span>Synchronisé avec ton compte Claude';
-  if (sync.mode === 'firebase' && sync.user) return '<span class="dot ok"></span>Synchronisé · ' + esc(sync.user);
-  if (sync.mode === 'firebase') return '<span class="dot warn"></span>Non connecté · <a href="#profil">se connecter</a>';
+  if (sync.mode === 'firebase' && sync.user) return '<span class="dot ok"></span>Synchronisé en ligne';
+  if (sync.mode === 'firebase') return '<span class="dot warn"></span>Hors ligne · enregistré sur cet appareil';
   return '<span class="dot"></span>Enregistré sur cet appareil';
 }
 function paintSync() {
@@ -389,8 +389,11 @@ function drawMemo() {
 function vProfil() {
   let acc = '';
   if (sync.mode === 'claude') acc = `<p>${syncLabel()}</p><p class="small mute">Ta progression suit ton compte Claude, sur tous tes appareils.</p>`;
-  else if (sync.mode === 'firebase' && sync.user) acc = `<p>${syncLabel()}</p><p class="small mute">Connecte-toi avec le même compte Google sur ton PC et ton téléphone : ta progression est la même partout.</p><button class="btn ghost" id="logout">Se déconnecter</button>`;
-  else if (sync.mode === 'firebase') acc = `<p class="mute">Connecte-toi avec Google pour retrouver ta progression sur ton PC et ton téléphone.</p><button class="btn g" id="login">Se connecter avec Google</button><p class="saved">${esc(sync.msg)}</p>`;
+  else if (sync.mode === 'firebase' && sync.user) { const link = location.origin + location.pathname + '?cle=' + sync.key;
+    acc = `<p>${syncLabel()}</p><p class="small mute">Pour retrouver ta progression sur ton téléphone (ou un autre ordinateur), ouvre ce lien une seule fois sur cet appareil. Garde-le pour toi : il donne accès à ta progression.</p>
+    <code style="display:block;padding:10px 12px;margin:10px 0;font-size:12.5px">${esc(link)}</code><div class="row2"><button class="btn g" id="copyLink" data-link="${esc(link)}">Copier le lien</button></div><p class="saved" id="cpmsg"></p>
+    <details style="margin-top:14px"><summary class="small mute" style="cursor:pointer">Utiliser une autre clé</summary><input type="search" id="newKey" placeholder="Colle ta clé de synchro" style="margin-top:8px"><button class="btn ghost" id="useKey" style="margin-top:8px">Utiliser cette clé</button></details>`; }
+  else if (sync.mode === 'firebase') acc = `<p class="mute">${esc(sync.msg || 'Connexion à la synchronisation…')}</p>`;
   else acc = `<p>${syncLabel()}</p><p class="small mute">La synchronisation en ligne n'est pas encore activée sur cette version.</p>`;
   return `<h1 style="margin-bottom:16px">Profil et synchronisation</h1><div class="grid g2"><div class="card"><h3>Ma progression en ligne</h3><div style="margin-top:10px">${acc}</div></div>
   <div class="card"><h3>Sauvegarde manuelle</h3><p class="small mute" style="margin:6px 0 14px">Un fichier de sauvegarde, au cas où.</p><div class="row2">${IN_CLAUDE ? '<span class="small mute">Non nécessaire ici : tout est synchronisé.</span>' : `<button class="btn ghost" id="exp">Sauvegarder</button><label class="btn ghost" style="margin:0">Restaurer<input type="file" id="imp" accept=".json,application/json" hidden></label>`}</div><p class="saved" id="bk"></p></div></div>
@@ -428,6 +431,8 @@ document.addEventListener('click', async e => {
   if (id === 'openCorr') { S.corrige = Object.assign({}, S.corrige, {[k]: true}); persist(); render(true); }
   if (id === 'finish') { S.done = Object.assign({}, S.done, {[k]: new Date().toISOString()}); persist(); location.hash = '#accueil'; }
   if (id === 'undo') { S.done = Object.assign({}, S.done); delete S.done[k]; persist(); render(true); }
+  if (id === 'copyLink') { const b = e.target.closest('button'); try { await navigator.clipboard.writeText(b.dataset.link); document.getElementById('cpmsg').textContent = 'Lien copié. Envoie-le-toi (WhatsApp, mail) et ouvre-le sur ton téléphone.'; } catch (x) { document.getElementById('cpmsg').textContent = 'Sélectionne le lien ci-dessus et copie-le.'; } }
+  if (id === 'useKey') { const v = (document.getElementById('newKey').value || '').trim(); if (v.length >= 32) { try { localStorage.setItem('atelier-cle', v); } catch (x) {} location.reload(); } }
   if (id === 'login' && remote && remote.login) { try { await remote.login(); } catch (err) { sync.msg = 'Connexion impossible : ' + (err && err.code || 'réessaie'); render(true); } }
   if (id === 'logout' && remote && remote.logout) remote.logout();
   if (id === 'exp') { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(S)], {type:'application/json'})); a.download = 'atelier-progression-' + new Date().toISOString().slice(0,10) + '.json'; a.click(); document.getElementById('bk').textContent = 'Sauvegarde téléchargée.'; }
@@ -462,27 +467,28 @@ async function connectClaude() {
   else if (S.updatedAt) await ref.set(JSON.parse(JSON.stringify(S)));
   paintSync();
 }
+/* Synchro sans compte : une clé secrète par personne, partagée entre ses appareils par un lien. */
+function syncKey() {
+  let k = null;
+  try { const u = new URL(location.href); k = u.searchParams.get('cle'); if (k) { localStorage.setItem('atelier-cle', k); u.searchParams.delete('cle'); history.replaceState(null, '', u.pathname + u.hash); } } catch (e) {}
+  try { k = k || localStorage.getItem('atelier-cle'); } catch (e) {}
+  if (!k || k.length < 32) { const a = new Uint8Array(24); crypto.getRandomValues(a); k = Array.from(a, b => 'abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789'[b % 56]).join('') + Array.from(crypto.getRandomValues(new Uint8Array(8)), b => '23456789abcdefgh'[b % 16]).join(''); try { localStorage.setItem('atelier-cle', k); } catch (e) {} }
+  return k;
+}
 async function connectFirebase(cfg) {
   const V = 'https://www.gstatic.com/firebasejs/10.12.2/';
-  const [{initializeApp}, A, F] = await Promise.all([import(V + 'firebase-app.js'), import(V + 'firebase-auth.js'), import(V + 'firebase-firestore.js')]);
-  const fa = initializeApp(cfg), auth = A.getAuth(fa), fs = F.getFirestore(fa), prov = new A.GoogleAuthProvider();
-  sync.mode = 'firebase'; let unsub = null;
-  remote = {save: null,
-    login: async () => { try { await A.signInWithPopup(auth, prov); } catch (err) { if (/popup/.test(err.code || '')) await A.signInWithRedirect(auth, prov); else throw err; } },
-    logout: () => A.signOut(auth)};
-  A.getRedirectResult(auth).catch(() => {});
-  A.onAuthStateChanged(auth, async u => {
-    if (unsub) { unsub(); unsub = null; }
-    if (!u) { sync.user = null; remote.save = null; render(true); return; }
-    sync.user = u.email || u.displayName || 'connecté';
-    const ref = F.doc(fs, 'users', u.uid);
-    remote.save = d => F.setDoc(ref, d);
+  const [{initializeApp}, F] = await Promise.all([import(V + 'firebase-app.js'), import(V + 'firebase-firestore.js')]);
+  const fs = F.getFirestore(initializeApp(cfg));
+  const key = syncKey(), ref = F.doc(fs, 'users', 'atelier_' + key);
+  sync.mode = 'firebase'; sync.key = key; sync.user = 'clé ' + key.slice(0, 4) + '…';
+  const pick = d => { const o = {}; ['notions','quiz','steps','journal','evals','done','corrige','updatedAt'].forEach(x => { if (d[x] !== undefined) o[x] = d[x]; }); return JSON.parse(JSON.stringify(o)); };
+  remote = {save: d => F.setDoc(ref, pick(d))};
+  try {
     const snap = await F.getDoc(ref);
-    if (snap.exists()) { if (!adopt(snap.data()) && S.updatedAt > (snap.data().updatedAt || 0)) await F.setDoc(ref, JSON.parse(JSON.stringify(S))); }
-    else if (S.updatedAt) await F.setDoc(ref, JSON.parse(JSON.stringify(S)));
-    unsub = F.onSnapshot(ref, s => { if (s.exists() && !s.metadata.hasPendingWrites) adopt(s.data()); });
-    render(true);
-  });
+    if (snap.exists()) { if (!adopt(snap.data()) && S.updatedAt > (snap.data().updatedAt || 0)) await F.setDoc(ref, pick(S)); }
+    else await F.setDoc(ref, pick(S));
+    F.onSnapshot(ref, s => { if (s.exists() && !s.metadata.hasPendingWrites) adopt(s.data()); });
+  } catch (e) { sync.user = null; sync.msg = 'Synchronisation indisponible pour le moment.'; }
   render(true);
 }
 (async () => {
