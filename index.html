@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Atelier Excel & Power BI</title>
+<meta name="theme-color" content="#0f6b3a">
+<meta name="description" content="Cours et cas pratiques Excel & Power BI pour le contrôle de gestion">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE: a calm, serious training workbook for a future financial controller.
+   IDEA: the app behaves like an Excel workbook — sheet tabs, a formula bar, a selected cell.
+   PICTURE: the progression as a spreadsheet row of 16 cells, this week's two sessions as two big cells.
+   COLOUR and TYPE: spreadsheet green leads, white ground, yellow selected-cell accent; IBM Plex Sans + Plex Mono for formulas.
+   LAYOUT: green band with the next session and the progress picture, then the programme as a sheet; session pages with sheet tabs. */
+:root{color-scheme:light dark;
+--bg:light-dark(#ffffff,#0e1411);--panel:light-dark(#f4f7f5,#151d19);--ink:light-dark(#14201a,#e7eee9);--mute:light-dark(#5b6b62,#9bb0a4);
+--grid:light-dark(#dfe6e1,#26332c);--green:#0f6b3a;--green2:light-dark(#0f6b3a,#3fae6f);--band:light-dark(#0f6b3a,#0b3b22);
+--yellow:#ffd84a;--yellowbg:light-dark(#fff6cf,#3a3418);--red:light-dark(#b4380e,#ff8a5c);--redbg:light-dark(#fdeee7,#3a1d12);--bluebg:light-dark(#e8f3ec,#14281c)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "IBM Plex Sans",system-ui,sans-serif;overflow-x:clip}
+code,kbd,pre{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.92em}
+code{overflow-wrap:anywhere;background:var(--panel);padding:1px 5px;border-radius:4px}
+kbd{border:1px solid var(--grid);border-bottom-width:2px;border-radius:5px;padding:0 6px;background:var(--bg)}
+a{color:var(--green2)}
+button{font:inherit;cursor:pointer}
+.wrap{max-width:1240px;margin:0 auto;padding:0 max(4vw,16px)}
+header.top{border-bottom:1px solid var(--grid);background:var(--bg);position:sticky;top:0;z-index:5}
+header.top .wrap{display:flex;align-items:center;gap:16px;min-height:58px;flex-wrap:wrap}
+.brand{font-weight:700;letter-spacing:-.01em;margin-right:auto;display:flex;align-items:center;gap:10px}
+.brand i{width:22px;height:22px;border-radius:4px;background:var(--green);display:inline-grid;place-items:center;color:#fff;font-style:normal;font-size:12px}
+.brand small{color:var(--mute);font-weight:400}
+nav.main{display:flex;gap:4px;flex-wrap:wrap}
+nav.main a{text-decoration:none;color:var(--ink);padding:10px 14px;border-radius:8px;min-height:44px;display:inline-flex;align-items:center}
+nav.main a.on{background:var(--bluebg);color:var(--green2);font-weight:600}
+.band{background:var(--band);color:#fff;padding:clamp(28px,4vw,56px) 0}
+.hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:clamp(24px,4vw,56px);align-items:center}
+.eyebrow{font-size:14px;opacity:.85;margin:0 0 10px}
+h1{font-size:clamp(32px,4.4vw,50px);line-height:1.05;margin:0 0 14px;text-wrap:balance;letter-spacing:-.02em}
+h2{font-size:clamp(24px,2.6vw,32px);line-height:1.15;margin:0 0 12px;letter-spacing:-.01em}
+h3{font-size:20px;margin:0 0 8px}
+h4{font-size:17px;margin:26px 0 8px}
+.hero p.m{font-size:17px;max-width:56ch;opacity:.92;margin:0 0 22px}
+.btns{display:flex;gap:10px;flex-wrap:wrap}
+.btn{border:0;border-radius:10px;padding:12px 18px;min-height:44px;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
+.btn.y{background:var(--yellow);color:#1b1a0f}
+.btn.o{background:transparent;color:inherit;box-shadow:inset 0 0 0 1.5px currentColor}
+.btn.g{background:var(--green);color:#fff}
+.btn:focus-visible,a:focus-visible,button:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+.sheet{background:#fff;color:#14201a;border-radius:14px;padding:clamp(16px,2.4vw,26px);box-shadow:0 18px 40px rgba(0,0,0,.25)}
+:root[data-theme=dark] .sheet,.sheet{background:light-dark(#fff,#111a15);color:var(--ink)}
+.sheet .lbl{font-size:13px;color:var(--mute);margin-bottom:6px}
+.week{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.week div{border:1.5px solid var(--grid);border-radius:10px;padding:14px;min-height:96px;display:flex;flex-direction:column;justify-content:space-between}
+.week div.ok{border-color:var(--green);background:var(--bluebg)}
+.week b{font-size:30px;line-height:1}
+.week span{font-size:14px;color:var(--mute)}
+.strip{display:grid;grid-template-columns:repeat(16,minmax(0,1fr));border:1px solid var(--grid);border-radius:8px;overflow:hidden}
+.strip a{aspect-ratio:1/1.15;display:grid;place-items:center;font:500 12px "IBM Plex Mono",monospace;border-right:1px solid var(--grid);color:var(--mute);text-decoration:none}
+.strip a:last-child{border-right:0}
+.strip a.ready{color:var(--ink)}
+.strip a.cur{background:var(--yellowbg);box-shadow:inset 0 0 0 2px var(--yellow);color:var(--ink);font-weight:700}
+.strip a.done{background:var(--green);color:#fff}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--mute);margin-top:10px}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:16px}
+.stats div{background:var(--panel);border-radius:10px;padding:10px 12px}
+.stats b{display:block;font-size:22px}
+.stats span{font-size:13px;color:var(--mute)}
+section.pad{padding:clamp(28px,4vw,56px) 0}
+.prog{border:1px solid var(--grid);border-radius:12px;overflow:hidden}
+.row{display:grid;grid-template-columns:64px 120px minmax(0,1fr) 120px;gap:12px;align-items:center;padding:14px 16px;border-top:1px solid var(--grid);text-decoration:none;color:inherit}
+.row:first-child{border-top:0}
+a.row:hover{background:var(--panel)}
+.row .n{font:500 14px "IBM Plex Mono",monospace;color:var(--mute)}
+.row .t{font-weight:600}
+.row .d{font-size:14px;color:var(--mute)}
+.chip{font-size:13px;border-radius:99px;padding:3px 10px;white-space:nowrap;justify-self:start}
+.chip.tool{background:var(--panel)}
+.st-fait{background:var(--green);color:#fff}.st-cours{background:var(--yellowbg);color:var(--ink)}.st-faire{background:var(--bluebg);color:var(--green2)}.st-venir{color:var(--mute);background:transparent;border:1px dashed var(--grid)}
+.grp{font-size:14px;color:var(--mute);margin:22px 0 8px;font-weight:600}
+/* séance */
+.shead{padding:clamp(24px,3vw,40px) 0 0;background:var(--panel);border-bottom:1px solid var(--grid)}
+.obj{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;margin:14px 0 22px;padding:0;list-style:none}
+.obj li{background:var(--bg);border:1px solid var(--grid);border-radius:10px;padding:10px 12px;font-size:15px}
+.tabs{display:flex;gap:2px;overflow-x:auto}
+.tabs button{border:1px solid var(--grid);border-bottom:0;background:var(--panel);color:var(--mute);padding:10px 18px;min-height:44px;border-radius:10px 10px 0 0;white-space:nowrap}
+.tabs button.on{background:var(--bg);color:var(--green2);font-weight:600;box-shadow:inset 0 3px 0 var(--green2)}
+.cours{display:grid;grid-template-columns:260px minmax(0,1fr);gap:clamp(20px,3vw,48px);padding:32px 0}
+.toc{position:sticky;top:76px;align-self:start;display:flex;flex-direction:column;gap:2px}
+.toc a{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:8px;text-decoration:none;color:var(--ink);font-size:15px;line-height:1.35}
+.toc a:hover{background:var(--panel)}
+.toc a i{flex:none;width:18px;height:18px;border:1.5px solid var(--grid);border-radius:4px;margin-top:1px;font-style:normal;font-size:12px;display:grid;place-items:center}
+.toc a.ok i{background:var(--green);border-color:var(--green);color:#fff}
+.toc .bar{height:6px;background:var(--grid);border-radius:9px;margin:4px 10px 12px;overflow:hidden}.toc .bar span{display:block;height:100%;background:var(--green)}
+article.notion{border-bottom:1px solid var(--grid);padding-bottom:28px;margin-bottom:28px;max-width:78ch}
+article.notion header{display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap}
+article.notion .dur{font-size:13px;color:var(--mute)}
+.done-btn{margin-top:16px;border:1.5px solid var(--green2);color:var(--green2);background:transparent;border-radius:9px;padding:9px 14px;min-height:44px}
+.done-btn.ok{background:var(--green);border-color:var(--green);color:#fff}
+pre.formula{background:var(--panel);border-left:4px solid var(--green2);padding:12px 14px;border-radius:6px;overflow-x:auto;white-space:pre;margin:12px 0}
+pre.formula code{background:none;padding:0}
+.tip,.trap{border-radius:10px;padding:12px 14px;margin:14px 0;font-size:15px}
+.tip{background:var(--yellowbg)}.trap{background:var(--redbg)}
+.tip b,.trap b{display:block;margin-bottom:2px}.trap b{color:var(--red)}
+figure.xl{margin:14px 0;border:1px solid var(--grid);border-radius:8px;overflow:hidden;background:var(--bg)}
+figure.xl figcaption{font-size:13px;color:var(--mute);padding:8px 10px;border-bottom:1px solid var(--grid)}
+.fx{display:flex;border-bottom:1px solid var(--grid);font-size:14px}
+.fx .nm{padding:6px 10px;border-right:1px solid var(--grid);color:var(--mute);font-family:"IBM Plex Mono",monospace;min-width:52px}
+.fx code{background:none;padding:6px 10px}
+.scroll{overflow-x:auto}
+figure.xl table{border-collapse:collapse;font-size:14px;width:100%}
+figure.xl th{background:var(--panel);color:var(--mute);font-weight:500;font-size:12px;padding:3px 8px;border:1px solid var(--grid);text-align:center}
+figure.xl td{border:1px solid var(--grid);padding:5px 9px;white-space:nowrap}
+figure.xl td.num{text-align:right;font-variant-numeric:tabular-nums}
+figure.xl td.hi{background:var(--yellowbg);box-shadow:inset 0 0 0 2px var(--yellow);font-weight:600}
+figure.xl td.src{background:var(--bluebg)}
+table.plain{border-collapse:collapse;width:100%;font-size:15px;margin:12px 0}
+table.plain th,table.plain td{border-bottom:1px solid var(--grid);padding:8px 10px;text-align:left;vertical-align:top}
+table.plain th{font-size:13px;color:var(--mute);font-weight:600}
+table.num td:not(:first-child),table.num th:not(:first-child){text-align:right;white-space:nowrap}
+tr.bad td{color:var(--red);font-weight:600}
+.quiz{background:var(--panel);border-radius:14px;padding:clamp(18px,3vw,28px);max-width:78ch}
+.q{margin:18px 0}
+.q p{font-weight:600;margin:0 0 8px}
+.q .opts{display:grid;gap:6px}
+.q button{text-align:left;border:1.5px solid var(--grid);background:var(--bg);color:var(--ink);border-radius:9px;padding:10px 12px;min-height:44px}
+.q button.right{border-color:var(--green);background:var(--bluebg)}
+.q button.wrong{border-color:var(--red);background:var(--redbg)}
+.q .ex{font-size:15px;margin-top:8px;color:var(--mute)}
+.cas{padding:32px 0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,360px);gap:clamp(20px,3vw,48px)}
+blockquote{margin:14px 0;padding:14px 18px;border-left:4px solid var(--yellow);background:var(--yellowbg);border-radius:0 10px 10px 0;font-style:italic}
+.steps{list-style:none;padding:0;margin:16px 0;border:1px solid var(--grid);border-radius:12px;overflow:hidden}
+.steps li{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 14px;border-top:1px solid var(--grid)}
+.steps li:first-child{border-top:0}
+.steps button{width:44px;height:44px;border-radius:9px;border:1.5px solid var(--grid);background:var(--bg);color:var(--ink);font:600 15px "IBM Plex Mono",monospace}
+.steps li.ok button{background:var(--green);border-color:var(--green);color:#fff}
+.steps li.ok b{text-decoration:line-through;opacity:.6}
+.steps small{color:var(--mute);display:block;font-size:14px}
+.steps .min{font-size:13px;color:var(--mute);white-space:nowrap}
+.side{background:var(--panel);border-radius:14px;padding:20px;align-self:start}
+.side ol{padding-left:20px;margin:8px 0}
+.lock{text-align:center;padding:48px 20px;border:1.5px dashed var(--grid);border-radius:14px;margin:32px 0}
+.lead{font-size:19px;font-weight:600;max-width:70ch}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:18px 0}
+.kpis div{border:1px solid var(--grid);border-radius:10px;padding:12px}
+.kpis span{font-size:13px;color:var(--mute);display:block}.kpis b{font-size:clamp(22px,2.4vw,28px)}
+table.f td:first-child{white-space:nowrap;color:var(--mute);width:1%}
+.note{color:var(--mute);font-size:15px}
+.bilan{padding:32px 0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(20px,3vw,48px)}
+label{font-weight:600;display:block;margin:14px 0 6px}
+textarea,input[type=search]{width:100%;font:16px/1.5 "IBM Plex Sans",sans-serif;border:1.5px solid var(--grid);border-radius:10px;padding:10px 12px;background:var(--bg);color:var(--ink)}
+textarea{min-height:84px;resize:vertical}
+.ev{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--grid);font-size:15px}
+.ev .sc{display:flex;gap:4px}
+.ev .sc button{width:38px;height:44px;border:1.5px solid var(--grid);background:var(--bg);color:var(--ink);border-radius:8px}
+.ev .sc button.on{background:var(--green);border-color:var(--green);color:#fff}
+.saved{font-size:14px;color:var(--mute);min-height:22px}
+.memo td:nth-child(2){font-family:"IBM Plex Mono",monospace;font-size:14px}
+.empty{color:var(--mute);padding:20px 0}
+footer{border-top:1px solid var(--grid);padding:22px 0;color:var(--mute);font-size:14px}
+@media(max-width:900px){.hero,.cas,.bilan{grid-template-columns:minmax(0,1fr)}.cours{grid-template-columns:minmax(0,1fr)}.toc{position:static;border:1px solid var(--grid);border-radius:12px;padding:8px}}
+@media(max-width:600px){.row{grid-template-columns:44px minmax(0,1fr);row-gap:4px}.row .chip.tool{display:none}.row .chip:last-child{grid-column:2}.stats{grid-template-columns:repeat(3,minmax(0,1fr))}.strip a{font-size:10px}.ev{grid-template-columns:minmax(0,1fr)}nav.main a{padding:8px 6px;font-size:15px}.brand small{display:none}header.top{position:static}.brand{width:100%;margin:8px 0 0}nav.main{width:100%;justify-content:space-between}}
+@media(prefers-reduced-motion:no-preference){.strip a.cur{animation:blink 2.4s ease-in-out infinite}@keyframes blink{50%{box-shadow:inset 0 0 0 2px transparent}}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <div class="brand"><i>fx</i>Atelier Excel & Power BI <small>· Rhôna Distribution</small></div>
+  <nav class="main" aria-label="Navigation"><a href="#accueil" data-nav="accueil">Tableau de bord</a><a href="#s01" data-nav="seance" id="navSeance">Séance en cours</a><a href="#memo" data-nav="memo">Mémo</a></nav>
+</div></header>
+<main id="app"></main>
+<footer><div class="wrap" style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between">
+<span>Entreprise, chiffres et personnes du cas pratique sont fictifs. Ta progression est enregistrée sur cet appareil.</span>
+<span style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn o" id="exp" style="color:var(--ink)">Sauvegarder ma progression</button><label class="btn o" style="color:var(--ink);margin:0;font-weight:600">Restaurer<input type="file" id="imp" accept=".json,application/json" hidden></label></span>
+</div><div class="wrap saved" id="bk"></div></footer>
+<script src="content.js"></script>
+<script>
+{
+const app = document.getElementById('app');
+const pad = n => String(n).padStart(2, '0');
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let S = {notions:{}, quiz:{}, steps:{}, journal:{}, evals:{}, done:{}, corrige:{}};
+let saveTimer = null, tab = {};
+const LS = 'atelier-rhona-v1';
+try { const l = localStorage.getItem(LS); if (l) S = Object.assign(S, JSON.parse(l)); } catch (e) {}
+
+function save() {
+  try { localStorage.setItem(LS, JSON.stringify(S)); } catch (e) {}
+  clearTimeout(saveTimer);
+  const el = document.querySelector('.saved'); if (el) el.textContent = 'Enregistrement…';
+  saveTimer = setTimeout(async () => {
+    const el2 = document.querySelector('.saved'); if (el2) el2.textContent = 'Enregistré';
+  }, 700);
+}
+const key = n => 's' + pad(n);
+const ready = n => PROGRAMME[n-1] && PROGRAMME[n-1].ready && CONTENT[key(n)];
+function status(n) {
+  if (!ready(n)) return 'venir';
+  const k = key(n);
+  if (S.done[k]) return 'fait';
+  const any = Object.keys(S.notions[k]||{}).length || Object.keys(S.steps[k]||{}).length || Object.keys(S.quiz[k]||{}).length;
+  return any ? 'cours' : 'faire';
+}
+const LBL = {fait:'Fait', cours:'En cours', faire:'À faire', venir:'À venir'};
+function current() {
+  for (const p of PROGRAMME) if (ready(p.n) && !S.done[key(p.n)]) return p.n;
+  let last = 1; PROGRAMME.forEach(p => { if (ready(p.n)) last = p.n; }); return last;
+}
+function weekStart(d) { const x = new Date(d); const day = (x.getDay() + 6) % 7; x.setHours(0,0,0,0); x.setDate(x.getDate() - day); return x; }
+function thisWeek() {
+  const ws = weekStart(new Date()).getTime();
+  return Object.entries(S.done).filter(([k, d]) => weekStart(new Date(d)).getTime() === ws).sort((a,b) => a[1] < b[1] ? -1 : 1);
+}
+const fmtDate = d => new Date(d).toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long'});
+
+function viewHome() {
+  const cur = current(), p = PROGRAMME[cur-1], wk = thisWeek();
+  const nDone = Object.keys(S.done).length;
+  const nNot = Object.values(S.notions).reduce((a, o) => a + Object.values(o).filter(Boolean).length, 0);
+  let qa = 0, qt = 0;
+  Object.entries(S.quiz).forEach(([k, o]) => { const c = CONTENT[k]; if (!c) return; Object.entries(o).forEach(([i, v]) => { qt++; if (c.quiz[i] && c.quiz[i].a === v) qa++; }); });
+  const cell = i => { const w = wk[i]; return w ? `<div class="ok"><span>Séance ${i+1} de la semaine</span><b>S${esc(w[0].slice(1))}</b><span>faite ${esc(fmtDate(w[1]))}</span></div>` : `<div><span>Séance ${i+1} de la semaine</span><b>—</b><span>à faire quand tu veux</span></div>`; };
+  const groups = [['Excel','Excel : les fondamentaux du contrôleur'],['Power Query','Le pont entre Excel et Power BI'],['Power BI','Power BI'],['Synthèse','Synthèse et portfolio']];
+  app.innerHTML = `
+  <div class="band"><div class="wrap hero">
+    <div>
+      <p class="eyebrow">${S.done[key(cur)] ? `Séance S${pad(cur)} terminée · demande la suivante à Claude` : `Prochaine séance · S${pad(cur)} · ${esc(p.tool)}`}</p>
+      <h1>${esc(p.title)}</h1>
+      <p class="m">${esc(p.mission)}. D'abord le cours, puis le cas pratique dans Excel, puis le corrigé.</p>
+      <div class="btns"><a class="btn y" href="#s${pad(cur)}" data-go="cours">Commencer le cours</a><a class="btn o" href="#s${pad(cur)}" data-go="cas">Aller au cas pratique</a></div>
+    </div>
+    <div class="sheet">
+      <div class="lbl">Cette semaine : objectif 2 séances, jours libres</div>
+      <div class="week">${cell(0)}${cell(1)}</div>
+      <div class="lbl">Progression sur les 16 séances</div>
+      <div class="strip">${PROGRAMME.map(q => { const s = status(q.n); const c = s === 'fait' ? 'done' : q.n === cur ? 'cur' : ready(q.n) ? 'ready' : ''; return ready(q.n) ? `<a class="${c} ready" href="#s${pad(q.n)}" aria-label="Séance ${q.n} : ${LBL[s]}">${q.n}</a>` : `<a class="${c}" aria-label="Séance ${q.n} à venir">${q.n}</a>`; }).join('')}</div>
+      <div class="legend"><span>Vert : faite</span><span>Jaune : en cours</span><span>Gris : à venir</span></div>
+      <div class="stats"><div><b>${nDone}/16</b><span>séances faites</span></div><div><b>${nNot}</b><span>notions comprises</span></div><div><b>${qt ? Math.round(qa/qt*100) + ' %' : '—'}</b><span>réussite aux quiz</span></div></div>
+    </div>
+  </div></div>
+  <section class="pad"><div class="wrap">
+    <h2>Le programme</h2>
+    <p class="note">Ta mission : construire le pilotage de gestion de Rhôna Distribution, PME lyonnaise de 18 salariés qui équipe cafés, hôtels et restaurants. Chaque séance = un cours, puis une demande du DAF à traiter. Les séances s'ajoutent au fur et à mesure, toujours avec une d'avance.</p>
+    ${groups.map(([t, lab]) => `<div class="grp">${lab}</div><div class="prog">${PROGRAMME.filter(q => q.tool === t || (t === 'Power Query' && q.tool === 'Power Query')).map(q => { const s = status(q.n); const inner = `<span class="n">S${pad(q.n)}</span><span class="chip tool">${esc(q.tool)}</span><span><span class="t">${esc(q.title)}</span><br><span class="d">${esc(q.mission)} · ${esc(q.skills.join(', '))}</span></span><span class="chip st-${s}">${LBL[s]}</span>`; return ready(q.n) ? `<a class="row" href="#s${pad(q.n)}">${inner}</a>` : `<div class="row">${inner}</div>`; }).join('')}</div>`).join('')}
+  </div></section>`;
+}
+
+function viewSeance(n) {
+  const k = key(n), p = PROGRAMME[n-1], c = CONTENT[k];
+  if (!ready(n)) { app.innerHTML = `<section class="pad"><div class="wrap"><h2>S${pad(n)} · ${esc(p ? p.title : '')}</h2><p class="empty">Cette séance arrive bientôt. Demande à Claude : « prépare la séance ${n} ».</p><a class="btn g" href="#accueil">Retour au tableau de bord</a></div></section>`; return; }
+  const t = tab[k] || 'cours';
+  app.innerHTML = `
+  <div class="shead"><div class="wrap">
+    <p class="eyebrow" style="color:var(--mute)">Séance ${n} sur 16 · ${esc(p.tool)} · 1h30 environ · <span class="chip st-${status(n)}">${LBL[status(n)]}</span></p>
+    <h1 style="font-size:clamp(30px,3.6vw,44px)">${esc(p.title)}</h1>
+    <ul class="obj">${c.objectifs.map(o => `<li>${esc(o)}</li>`).join('')}</ul>
+    <div class="tabs" role="tablist">${[['cours','1 · Cours'],['cas','2 · Cas pratique'],['corrige','3 · Corrigé'],['bilan','4 · Bilan']].map(([id, l]) => `<button role="tab" aria-selected="${t===id}" class="${t===id?'on':''}" data-tab="${id}">${l}</button>`).join('')}</div>
+  </div></div>
+  <div class="wrap" id="pane"></div>`;
+  const pane = document.getElementById('pane');
+  if (t === 'cours') {
+    const no = S.notions[k] || {}, nb = c.cours.filter(x => no[x.id]).length;
+    pane.innerHTML = `<div class="cours"><nav class="toc" aria-label="Notions"><div class="note" style="padding:0 10px">${nb} / ${c.cours.length} notions comprises</div><div class="bar"><span style="width:${nb/c.cours.length*100}%"></span></div>${c.cours.map(x => `<a href="#s${pad(n)}" data-jump="${x.id}" class="${no[x.id]?'ok':''}"><i>${no[x.id]?'✓':''}</i><span>${esc(x.t)}</span></a>`).join('')}<a href="#s${pad(n)}" data-jump="quiz"><i>?</i><span>Quiz de fin de cours</span></a></nav>
+    <div>${c.cours.map(x => `<article class="notion" id="n-${x.id}"><header><h3>${esc(x.t)}</h3><span class="dur">${x.d} min</span></header>${x.html}<button class="done-btn ${no[x.id]?'ok':''}" data-notion="${x.id}">${no[x.id] ? '✓ Compris' : "J'ai compris cette notion"}</button></article>`).join('')}
+    <div class="quiz" id="n-quiz"><h3>Quiz : vérifie que tu as compris</h3><p class="note">Réponds avant de passer au cas pratique. Tu peux recommencer en cliquant sur une autre réponse.</p>${c.quiz.map((q, i) => { const a = (S.quiz[k]||{})[i]; return `<div class="q"><p>${i+1}. ${esc(q.q)}</p><div class="opts">${q.o.map((o, j) => `<button data-q="${i}" data-o="${j}" class="${a===undefined?'':j===q.a&&a!==undefined?'right':j===a?'wrong':''}">${esc(o)}</button>`).join('')}</div>${a!==undefined?`<div class="ex">${a===q.a?'Bonne réponse. ':'Pas tout à fait. '}${esc(q.e)}</div>`:''}</div>`; }).join('')}
+    <div class="btns"><button class="btn g" data-tab="cas">Passer au cas pratique</button></div></div></div></div>`;
+  }
+  if (t === 'cas') {
+    const st = S.steps[k] || {};
+    pane.innerHTML = `<div class="cas"><div><h2>La demande du DAF</h2><p>${esc(c.cas.brief)}</p><blockquote>${esc(c.cas.quote)}</blockquote>
+    <h3 style="margin-top:24px">Les étapes (coche au fur et à mesure)</h3><ol class="steps">${c.cas.etapes.map(e => `<li class="${st[e.k]?'ok':''}"><button data-step="${e.k}" aria-pressed="${!!st[e.k]}">${st[e.k]?'✓':e.k}</button><span><b>${esc(e.t)}</b><small>${esc(e.x)}</small></span><span class="min">${e.d} min</span></li>`).join('')}</ol>
+    <p class="note">L'énoncé détaillé (questions, colonnes à créer, tableaux à construire) est dans l'onglet bleu « S1 Énoncé » du classeur.</p></div>
+    <aside class="side"><h3>Le classeur de la séance</h3><p style="font-size:15px">Tout est dedans : l'énoncé, les données et le corrigé complet.</p><a class="btn g" href="${esc(c.file)}" download="Rhona_S${pad(n)}.xlsx">Télécharger Rhona_S${pad(n)}.xlsx</a>
+    <ol style="font-size:15px"><li><b>Bleu</b> : l'énoncé</li><li><b>Vert</b> : tes données, tu travailles ici</li><li><b>Orange</b> : le corrigé, à ouvrir à la fin</li></ol>
+    <p class="note">Compatible Excel 2013. Formules en français, séparateur « ; ».</p></aside></div>`;
+  }
+  if (t === 'corrige') {
+    pane.innerHTML = S.corrige[k] ? `<div style="padding:32px 0;max-width:900px">${c.corrige}</div>` : `<div class="lock"><h3>Le corrigé est masqué</h3><p class="note">Essaie d'abord seul. Si tu bloques plus de 10 minutes sur une question, tu peux l'ouvrir.</p><button class="btn g" id="openCorr">J'ai terminé, afficher le corrigé</button></div>`;
+  }
+  if (t === 'bilan') {
+    const j = S.journal[k] || {}, ev = S.evals[k] || [];
+    pane.innerHTML = `<div class="bilan"><div><h2>Journal de séance</h2><p class="note">Trois lignes suffisent. C'est ce qui te permettra de mesurer ta progression, et de raconter ton parcours en entretien.</p>
+    <label for="j1">Ce que j'ai fait</label><textarea id="j1" data-j="fait">${esc(j.fait)}</textarea>
+    <label for="j2">Ce qui m'a bloqué</label><textarea id="j2" data-j="bloque">${esc(j.bloque)}</textarea>
+    <label for="j3">Ce que j'ai appris</label><textarea id="j3" data-j="appris">${esc(j.appris)}</textarea><p class="saved"></p></div>
+    <div><h2>Auto-évaluation</h2><p class="note">De 1 (pas du tout) à 5 (je sais le faire seul).</p>${c.autoeval.map((a, i) => `<div class="ev"><span>${esc(a)}</span><span class="sc">${[1,2,3,4,5].map(v => `<button data-ev="${i}" data-v="${v}" class="${ev[i]===v?'on':''}" aria-label="${v} sur 5">${v}</button>`).join('')}</span></div>`).join('')}
+    <div style="margin-top:24px">${S.done[k] ? `<p><b>Séance terminée le ${esc(fmtDate(S.done[k]))}.</b></p><button class="btn o" style="color:var(--mute)" id="undo">Annuler « séance faite »</button>` : `<button class="btn g" id="finish">Marquer la séance comme faite</button>`}</div></div></div>`;
+  }
+}
+
+function viewMemo() {
+  const rows = []; PROGRAMME.forEach(p => { const c = CONTENT[key(p.n)]; if (ready(p.n) && c.memo) c.memo.forEach(m => rows.push([...m, p.n])); });
+  app.innerHTML = `<section class="pad"><div class="wrap"><h2>Fiche mémo</h2><p class="note">Toutes les formules et notions vues jusqu'ici. Elle grossit à chaque séance : relis-la avant un entretien.</p>
+  <input type="search" id="q" placeholder="Rechercher une fonction, une notion…" aria-label="Rechercher">
+  <div class="scroll"><table class="plain memo"><thead><tr><th>Thème</th><th>Formule</th><th>À retenir</th><th>Séance</th></tr></thead><tbody id="mb"></tbody></table></div></div></section>`;
+  const draw = f => { const q = (f||'').toLowerCase(); document.getElementById('mb').innerHTML = rows.filter(r => r.join(' ').toLowerCase().includes(q)).map(r => `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td>S${pad(r[3])}</td></tr>`).join('') || '<tr><td colspan="4" class="empty">Aucun résultat.</td></tr>'; };
+  draw(''); document.getElementById('q').addEventListener('input', e => draw(e.target.value));
+}
+
+function route() {
+  const h = (location.hash || '#accueil').slice(1);
+  const m = h.match(/^s(\d\d)$/);
+  document.getElementById('navSeance').setAttribute('href', '#s' + pad(current()));
+  document.querySelectorAll('nav.main a').forEach(a => a.classList.toggle('on', (a.dataset.nav === 'accueil' && !m && h !== 'memo') || (a.dataset.nav === 'seance' && !!m) || (a.dataset.nav === 'memo' && h === 'memo')));
+  if (m) viewSeance(+m[1]); else if (h === 'memo') viewMemo(); else viewHome();
+}
+function rerender(keepScroll) { const y = scrollY; route(); if (keepScroll) scrollTo(0, y); }
+const curN = () => { const m = (location.hash||'').match(/^#s(\d\d)$/); return m ? +m[1] : 0; };
+
+document.addEventListener('click', async e => {
+  const go = e.target.closest('[data-go]'); if (go) { tab['s' + go.getAttribute('href').slice(2)] = go.dataset.go; }
+  const n = curN(), k = key(n);
+  const tb = e.target.closest('[data-tab]'); if (tb && n) { tab[k] = tb.dataset.tab; rerender(); scrollTo(0, document.querySelector('.tabs').offsetTop - 70); return; }
+  const j = e.target.closest('[data-jump]'); if (j) { e.preventDefault(); const t = document.getElementById('n-' + j.dataset.jump); if (t) t.scrollIntoView({behavior:'smooth'}); return; }
+  const nb = e.target.closest('[data-notion]'); if (nb) { S.notions[k] = S.notions[k] || {}; S.notions[k][nb.dataset.notion] = !S.notions[k][nb.dataset.notion]; save(); rerender(true); return; }
+  const qb = e.target.closest('[data-q]'); if (qb) { S.quiz[k] = S.quiz[k] || {}; S.quiz[k][qb.dataset.q] = +qb.dataset.o; save(); rerender(true); return; }
+  const sb = e.target.closest('[data-step]'); if (sb) { S.steps[k] = S.steps[k] || {}; S.steps[k][sb.dataset.step] = !S.steps[k][sb.dataset.step]; save(); rerender(true); return; }
+  const eb = e.target.closest('[data-ev]'); if (eb) { S.evals[k] = (S.evals[k] || []).slice(); S.evals[k][+eb.dataset.ev] = +eb.dataset.v; save(); rerender(true); return; }
+  if (e.target.id === 'openCorr') { S.corrige[k] = true; save(); rerender(true); return; }
+  if (e.target.id === 'finish') { S.done[k] = new Date().toISOString(); save(); tab = {}; location.hash = '#accueil'; return; }
+  if (e.target.id === 'undo') { delete S.done[k]; save(); rerender(true); return; }
+  if (e.target.id === 'exp') {
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(S, null, 1)], {type:'application/json'}));
+    a.download = 'atelier-progression-' + new Date().toISOString().slice(0,10) + '.json'; a.click();
+    document.getElementById('bk').textContent = 'Fichier de sauvegarde téléchargé. Ouvre-le avec « Restaurer » sur ton autre appareil.';
+  }
+});
+document.addEventListener('change', e => {
+  if (e.target.id !== 'imp' || !e.target.files[0]) return;
+  const r = new FileReader();
+  r.onload = () => { try { const d = JSON.parse(r.result); if (typeof d !== 'object' || !d.done) throw 0; S = Object.assign({notions:{}, quiz:{}, steps:{}, journal:{}, evals:{}, done:{}, corrige:{}}, d); save(); route(); document.getElementById('bk').textContent = 'Progression restaurée.'; } catch (err) { document.getElementById('bk').textContent = "Ce fichier n'est pas une sauvegarde valide."; } };
+  r.readAsText(e.target.files[0]);
+});
+let jt = null;
+document.addEventListener('input', e => {
+  const t = e.target.closest('[data-j]'); if (!t) return;
+  const k = key(curN()); S.journal[k] = S.journal[k] || {}; S.journal[k][t.dataset.j] = t.value;
+  clearTimeout(jt); jt = setTimeout(save, 600);
+});
+window.addEventListener('hashchange', () => { route(); scrollTo(0, 0); });
+route();
+
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+</script>
+</body>
+</html>
