@@ -1,29 +1,48 @@
 /* Contenu de l'Atelier Excel & Power BI — Rhôna Distribution.
    Pour ajouter une séance : compléter PROGRAMME[n].ready = true et ajouter CONTENT.sXX. */
 
-/* Petite grille façon Excel pour illustrer les notions.
-   cols : en-têtes de colonnes (lettres), rows : lignes de valeurs, opts.hi : cellules surlignées ("B2"), opts.fx : barre de formule */
+/* Grille au rendu Excel : zone Nom + barre de formule, en-têtes de lignes/colonnes, cellule active, références colorées, onglet.
+   rows : lignes de valeurs. opts.cell : cellule active ("B4"), opts.fx : formule affichée, opts.hi : plage sélectionnée,
+   opts.src / opts.refs : cellules utilisées par la formule (encadrées en couleur comme quand on appuie sur F2),
+   opts.sheet : nom de l'onglet, opts.title : légende, opts.start : 1er n° de ligne, opts.col0 : décalage de la 1re lettre.
+   Une valeur qui commence par ' est un nombre stocké en texte (aligné à gauche, triangle vert). */
 function G(rows, opts) {
   opts = opts || {};
-  const hi = opts.hi || [], src = opts.src || [], start = opts.start || 1;
+  const hi = opts.hi || [], start = opts.start || 1;
+  const groups = opts.refs || (opts.src ? [opts.src] : []);
   const n = Math.max(...rows.map(r => r.length));
   const letters = Array.from({length: n}, (_, i) => String.fromCharCode(65 + (opts.col0 || 0) + i));
+  const act = opts.cell && /^[A-Z]+\d+$/.test(opts.cell) ? opts.cell : null;
+  const aCol = act ? act.replace(/\d+/, '') : null, aRow = act ? +act.replace(/[A-Z]+/, '') : null;
+  const isNum = v => /^-?[\d  ]*\d([.,]\d+)?\s?(%|€| €)?$/.test(v);
   let h = '<figure class="xl">';
   if (opts.title) h += '<figcaption>' + opts.title + '</figcaption>';
-  if (opts.fx) h += '<div class="fx"><span class="nm">' + (opts.cell || 'fx') + '</span><code>' + opts.fx + '</code></div>';
-  h += '<div class="scroll"><table><thead><tr><th></th>' + letters.map(l => '<th>' + l + '</th>').join('') + '</tr></thead><tbody>';
+  h += '<div class="xbar"><span class="xname">' + (act || '') + '</span><span class="xicons">✕ ✓ <i>fx</i></span><span class="xfx">' + (opts.fx || '') + '</span></div>';
+  h += '<div class="scroll"><table><thead><tr><th class="xc"></th>' + letters.map(l => '<th' + (l === aCol ? ' class="xa"' : '') + '>' + l + '</th>').join('') + '</tr></thead><tbody>';
   rows.forEach((r, i) => {
-    h += '<tr><th>' + (start + i) + '</th>';
+    const rn = start + i;
+    h += '<tr><th' + (rn === aRow ? ' class="xa"' : '') + '>' + rn + '</th>';
     for (let j = 0; j < n; j++) {
-      const ref = letters[j] + (start + i);
-      const v = r[j] === undefined ? '' : r[j];
-      const cls = (hi.includes(ref) ? 'hi ' : '') + (src.includes(ref) ? 'src ' : '') + (typeof v === 'number' || /^[\d\s.,%€-]+$/.test(String(v)) && v !== '' ? 'num' : '');
-      h += '<td class="' + cls + '">' + v + '</td>';
+      const ref = letters[j] + rn;
+      let v = r[j] === undefined ? '' : String(r[j]);
+      const cls = [];
+      if (v.startsWith("'")) { v = v.slice(1); cls.push('xt'); }
+      else if (/^#/.test(v)) cls.push('xe');
+      else if (v === 'VRAI' || v === 'FAUX') cls.push('xb');
+      else if (v !== '' && isNum(v)) cls.push('xn');
+      if (hi.includes(ref)) cls.push('xs');
+      const g = groups.findIndex(gr => gr.includes(ref)); if (g >= 0) cls.push('xr' + (g % 4));
+      if (ref === act) cls.push('xact');
+      h += '<td class="' + cls.join(' ') + '">' + v + '</td>';
     }
     h += '</tr>';
   });
-  return h + '</tbody></table></div></figure>';
+  h += '</tbody></table></div>';
+  if (opts.sheet) h += '<div class="xtabs"><span>' + opts.sheet + '</span></div>';
+  return h + '</figure>';
 }
+/* Exercice : énoncé (avec tableau) + solution masquée (avec tableau). */
+const EXO = (n, titre, enonce, solution) => '<details class="exo"><summary><span class="exn">Exercice ' + n + '</span>' + titre + '</summary><div class="exb">' + enonce + '<details class="sol"><summary>Voir la solution</summary><div class="solb">' + solution + '</div></details></div></details>';
 const F = s => '<pre class="formula"><code>' + s + '</code></pre>';
 const TIP = (t, b) => '<aside class="tip"><b>' + t + '</b>' + b + '</aside>';
 const TRAP = (t, b) => '<aside class="trap"><b>' + t + '</b>' + b + '</aside>';
@@ -60,7 +79,10 @@ CONTENT.s01 = {
   ],
   cours: [
   {id:'refs', t:"1. Les références : relatives, absolues, mixtes", d:25, html:
-  `<p>Dans une formule, <code>B4</code> ne veut pas dire « la cellule B4 » pour toujours. Excel la comprend comme une <b>position relative</b> : « la cellule située 1 colonne à gauche et 2 lignes au-dessus de moi », par exemple. C'est pour ça que, quand tu recopies une formule, les références bougent toutes seules.</p>
+  `<p>Quand tu écris une formule puis que tu la recopies (en tirant la petite poignée verte en bas à droite de la cellule), Excel <b>ne recopie pas la formule à l'identique</b> : il décale automatiquement les cellules qu'elle utilise.</p>
+  ${G([["Prix","Quantité","Total"],["10","3","30"],["25","2","50"],["8","5","40"]],{cell:"C3",fx:"=A3*B3",refs:[["A3"],["B3"]],hi:["C2","C3","C4"],sheet:"Exemple"})}
+  <p>Exemple : en C2, on a écrit <code>=A2*B2</code>. Recopiée vers le bas, la formule devient <code>=A3*B3</code> en C3 (c'est ce qu'on voit dans la barre de formule ci-dessus), puis <code>=A4*B4</code> en C4. C'est pratique : chaque ligne calcule avec ses propres chiffres.</p>
+  <p>Mais parfois, on veut qu'une cellule <b>ne bouge pas</b> pendant la recopie : un taux de TVA, un total, un paramètre. C'est le rôle du symbole <code>$</code>.</p>
   <h4>La règle de base : ce qui bouge quand on recopie</h4>
   <table class="plain"><thead><tr><th>Tu recopies…</th><th>Ce qui change dans la formule</th><th>Ce qui ne change jamais</th></tr></thead><tbody>
   <tr><td>vers le <b>bas</b> (ou le haut)</td><td>les <b>numéros de ligne</b> (4 → 5 → 6…)</td><td>les lettres de colonne</td></tr>
@@ -99,9 +121,33 @@ CONTENT.s01 = {
   ${TIP("Astuce : la touche F4","Clique sur une référence dans la barre de formule et appuie sur F4 : B1 → $B$1 → B$1 → $B1 → B1. Pas besoin de taper les $ à la main.")}
   ${TRAP("Comment trouver une erreur de $","Si un tableau affiche des zéros ou des résultats bizarres après recopie, clique sur une cellule en bas à droite du tableau et appuie sur F2 : Excel encadre en couleur les cellules utilisées. Tu vois tout de suite quelle référence a glissé au mauvais endroit.")}
   <h4>À toi de jouer</h4>
-  <details class="exo"><summary>Exercice 1 · Commission des commerciaux</summary><p>Le taux de commission (3 %) est en E1. Les ventes de chaque commercial sont en B2:B10. Quelle formule écrire en C2 pour la recopier jusqu'en C10 ?</p><details><summary>Voir la solution</summary><p><code>=B2*$E$1</code> : la vente change à chaque ligne, le taux est unique donc bloqué en ligne et en colonne.</p></details></details>
-  <details class="exo"><summary>Exercice 2 · Prix après remise</summary><p>Des prix catalogue sont en A3:A8, des taux de remise en B1:E1 (5 %, 10 %, 15 %, 20 %). Tu veux le prix remisé pour chaque prix et chaque remise. Quelle formule en B3 ?</p><details><summary>Voir la solution</summary><p><code>=$A3*(1-B$1)</code> : le prix est toujours en colonne A ($A), la remise toujours en ligne 1 ($1). On recopie à droite puis en bas.</p></details></details>
-  <details class="exo"><summary>Exercice 3 · Part de chaque mois</summary><p>Le CA des 12 mois est en B2:B13 et le total annuel en B14. En C2, tu veux la part du mois dans le total, puis recopier jusqu'en C13. Quelle formule ?</p><details><summary>Voir la solution</summary><p><code>=B2/$B$14</code> (ou <code>=B2/B$14</code>, puisqu'on recopie seulement vers le bas). Sans $, la formule de C3 diviserait par B15, qui est vide : #DIV/0!.</p></details></details></details>`},
+  ${EXO(1,"La commission des commerciaux",
+  `<p>Chaque commercial touche 3 % de ses ventes. Le taux de 3 % est écrit <b>une seule fois</b>, en E2. Tu veux calculer la commission en C2, puis recopier la formule vers le bas jusqu'en C4.</p>
+  ${G([["Commercial","Ventes","Commission","","Taux"],["Karim","168 444","","","3%"],["Sophie","127 855","",""],["Lucas","157 825","",""]],{cell:"C2",sheet:"Commissions"})}
+  <p><b>Question :</b> quelle formule écris-tu en C2 ?</p>`,
+  `<p><b>Réponse :</b> <code>=B2*$E$2</code></p>
+  ${G([["Commercial","Ventes","Commission","","Taux"],["Karim","168 444","5 053,32","","3%"],["Sophie","127 855","3 835,65",""],["Lucas","157 825","4 734,75",""]],{cell:"C4",fx:"=B4*$E$2",refs:[["B4"],["E2"]],hi:["C2","C3","C4"],sheet:"Commissions"})}
+  <p>On voit ici la formule de la dernière ligne (C4) : <code>B2</code> est devenu <code>B4</code>, car chaque commercial a ses propres ventes. <code>$E$2</code> n'a pas bougé, car tout le monde utilise le même taux.</p>
+  <p><b>Sans les $</b>, la formule de C4 serait <code>=B4*E4</code>. E4 est vide, donc le résultat serait 0.</p>`)}
+  ${EXO(2,"Le prix après remise",
+  `<p>Tu as 3 prix catalogue (colonne A) et 3 taux de remise (ligne 1). Tu veux remplir tout le tableau : chaque prix avec chaque remise. Tu écris une seule formule en B2, puis tu la recopies vers la droite <b>et</b> vers le bas.</p>
+  ${G([["Prix \\ Remise","5%","10%","15%"],["100","","",""],["250","","",""],["80","","",""]],{cell:"B2",sheet:"Remises"})}
+  <p><b>Rappel :</b> un prix après 5 % de remise = prix × (1 − 5 %).</p>
+  <p><b>Question :</b> quelle formule écris-tu en B2 ?</p>`,
+  `<p><b>Réponse :</b> <code>=$A2*(1-B$1)</code></p>
+  ${G([["Prix \\ Remise","5%","10%","15%"],["100","95","90","85"],["250","237,5","225","212,5"],["80","76","72","68"]],{cell:"D4",fx:"=$A4*(1-D$1)",refs:[["A4"],["D1"]],hi:["B2","C2","D2","B3","C3","D3","B4","C4","D4"],sheet:"Remises"})}
+  <p>Regarde la formule de la dernière cellule (D4) : <code>=$A4*(1-D$1)</code>.</p>
+  <ul><li><code>$A</code> : le prix est toujours dans la colonne A, donc on bloque la colonne. La ligne, elle, change (2, 3, 4).</li>
+  <li><code>$1</code> : la remise est toujours dans la ligne 1, donc on bloque la ligne. La colonne, elle, change (B, C, D).</li></ul>`)}
+  ${EXO(3,"La part de chaque mois dans le total",
+  `<p>Le CA de 3 mois est en B2:B4, et le total en B5. En C2, tu veux la part du mois de janvier dans le total, puis recopier la formule jusqu'en C4.</p>
+  ${G([["Mois","CA net","Part"],["Janvier","64 663",""],["Février","62 486",""],["Mars","73 207",""],["Total","200 356",""]],{cell:"C2",sheet:"Parts"})}
+  <p><b>Question :</b> quelle formule écris-tu en C2 ?</p>`,
+  `<p><b>Réponse :</b> <code>=B2/$B$5</code></p>
+  ${G([["Mois","CA net","Part"],["Janvier","64 663","32,3%"],["Février","62 486","31,2%"],["Mars","73 207","36,5%"],["Total","200 356",""]],{cell:"C3",fx:"=B3/$B$5",refs:[["B3"],["B5"]],hi:["C2","C3","C4"],sheet:"Parts"})}
+  <p>La ligne du mois change à chaque fois (B2, B3, B4), mais on divise toujours par le même total (B5), donc on le bloque.</p>
+  <p><b>Sans les $</b>, la formule de C3 serait <code>=B3/B6</code>. B6 est vide : Excel affiche l'erreur #DIV/0! (division par zéro).</p>`)}
+  `},
 
   {id:'clean', t:"2. Nettoyer un export avant de l'analyser", d:15, html:
   `<p>En entreprise, les données sortent d'un logiciel (facturation, comptabilité, ERP) et ne sont <b>jamais</b> parfaites. Trois défauts reviennent tout le temps. Ils sont dangereux parce qu'ils ne se voient pas à l'œil nu et qu'Excel ne prévient pas.</p>
@@ -121,7 +167,24 @@ CONTENT.s01 = {
   ${TRAP("Toujours compter avant et après","Note le nombre de lignes avant de nettoyer (=NBVAL(A:A)-1) puis après. Tu sais exactement ce que tu as supprimé, et tu peux le dire au DAF.")}
   ${TIP("Bonne pratique","Ne modifie pas les colonnes d'origine : ajoute une colonne « propre » à côté, avec la formule. Tu gardes une trace de ce qui a été corrigé, et un contrôleur peut toujours vérifier.")}
   <h4>À toi de jouer</h4>
-  <details class="exo"><summary>Exercice · Le total qui ne tombe pas juste</summary><p>Ta colonne de quantités affiche visuellement 10 + 20 + 30, mais SOMME renvoie 40. Que se passe-t-il et comment le vérifier ?</p><details><summary>Voir la solution</summary><p>Une des valeurs (ici 20) est stockée en texte : SOMME l'ignore. <code>=ESTTEXTE()</code> sur chaque cellule le confirme. On corrige avec <code>=CNUM()</code> ou « Convertir en nombre ».</p></details></details>`},
+  ${EXO(1,"Le total qui ne tombe pas juste",
+  `<p>Tu additionnes 3 quantités : 10, 20 et 30. Le total devrait faire 60, mais Excel affiche 40.</p>
+  ${G([["Quantité"],["10"],["'20"],["30"],["40"]],{cell:"A5",fx:"=SOMME(A2:A4)",refs:[["A2","A3","A4"]],sheet:"Ventes"})}
+  <p>Regarde bien la cellule A3 : le 20 est collé à gauche, avec un petit triangle vert dans le coin.</p>
+  <p><b>Question :</b> pourquoi le total est faux, et comment le corriger ?</p>`,
+  `<p><b>Réponse :</b> le 20 est stocké <b>en texte</b>. SOMME ignore les textes, donc elle additionne seulement 10 + 30 = 40.</p>
+  ${G([["Quantité","ESTTEXTE","Nombre"],["10","FAUX","10"],["'20","VRAI","20"],["30","FAUX","30"],["","","60"]],{cell:"C3",fx:"=CNUM(A3)",refs:[["A3"]],hi:["B3"],sheet:"Ventes"})}
+  <ul><li>En colonne B, <code>=ESTTEXTE(A2)</code> le confirme : VRAI seulement pour le 20.</li>
+  <li>En colonne C, <code>=CNUM(A2)</code> transforme chaque valeur en vrai nombre.</li>
+  <li>En C5, <code>=SOMME(C2:C4)</code> donne enfin 60.</li></ul>`)}
+  ${EXO(2,"Le client introuvable",
+  `<p>Dans ton export, les codes clients doivent tous faire 6 caractères (exemple : CLI007). Tu calcules leur longueur avec NBCAR.</p>
+  ${G([["Code client","Longueur"],["CLI007 ","7"],["CLI012","6"],["CLI003","6"]],{cell:"B2",fx:"=NBCAR(A2)",refs:[["A2"]],sheet:"Ventes"})}
+  <p><b>Question :</b> quel code pose problème, et quelle formule permet de le nettoyer ?</p>`,
+  `<p><b>Réponse :</b> CLI007, qui fait 7 caractères au lieu de 6 : il y a un espace invisible après le 7. On le nettoie avec <code>=SUPPRESPACE(A2)</code>.</p>
+  ${G([["Code client","Longueur","Code propre","Longueur"],["CLI007 ","7","CLI007","6"],["CLI012","6","CLI012","6"],["CLI003","6","CLI003","6"]],{cell:"C2",fx:"=SUPPRESPACE(A2)",refs:[["A2"]],sheet:"Ventes"})}
+  <p>Après nettoyage, tous les codes font 6 caractères : les recherches fonctionneront.</p>`)}
+  `},
 
   {id:'rechv', t:"3. RECHERCHEV : aller chercher une info dans une autre table", d:20, html:
   `<p>Ton export de ventes contient seulement la référence produit (<code>PEM-002</code>). Le prix et la famille sont dans une autre table, l'onglet Produits. RECHERCHEV fait le lien entre les deux, comme quand tu cherches un nom dans un annuaire pour trouver son numéro.</p>
@@ -134,7 +197,7 @@ CONTENT.s01 = {
   ${G([["Réf produit","Désignation","Famille","Prix d'achat","Prix de vente"],["VAI-001","Assiette plate (lot de 6)","Vaisselle","14,20","23,90"],["PEM-002","Blender pro 2 L","Petit électroménager","215,00","299,00"],["EMB-001","Boîte repas kraft","Emballages","38,50","59,00"]],{title:"Onglet Produits : colonne 1 = A, colonne 2 = B, colonne 3 = C…",src:["A3"],hi:["C3"]})}
   ${F("=RECHERCHEV(D2;Produits!$A:$C;3;FAUX)   →   Petit électroménager\n=RECHERCHEV(D2;Produits!$A:$E;5;FAUX)   →   299,00")}
   <p>Étape par étape : Excel prend la valeur de D2 (PEM-002), descend la colonne A de Produits jusqu'à la trouver (ligne 3), puis se décale de 3 colonnes vers la droite en comptant A comme la 1re : il renvoie C3.</p>
-  <p>Pourquoi les <code>$</code> sur <code>Produits!$A:$C</code> ? Parce qu'on recopie la formule vers le bas sur 1 400 lignes : la table de recherche, elle, ne doit pas bouger (notion 1, cas n°1).</p>
+  <p>Pourquoi les <code>$</code> sur <code>Produits!$A:$C</code> ? Parce qu'on recopie la formule vers le bas sur 1 400 lignes : la table de recherche, elle, ne doit pas bouger (comme le taux de TVA unique de la notion 1 : il ne doit pas bouger).</p>
   ${TRAP("Le piège n°1 en entreprise : oublier FAUX","Sans FAUX, Excel fait une recherche « approchée » : il renvoie une valeur proche, pas forcément la bonne, sans aucune erreur. Des reportings entiers sont faux à cause de ça.")}
   <h4>Lire les erreurs</h4>
   <table class="plain"><tbody><tr><td><code>#N/A</code></td><td>Valeur introuvable. Causes possibles : code inexistant, espace parasite, nombre en texte d'un côté et en nombre de l'autre, ou valeur cherchée qui n'est pas dans la 1re colonne de la table.</td></tr>
@@ -145,7 +208,19 @@ CONTENT.s01 = {
   <p>SIERREUR teste la formule : si elle renvoie une erreur, il affiche le message à la place. Ici, « Réf inconnue » t'aide à repérer les références absentes du catalogue.</p>
   ${TIP("Astuce","Utilise SIERREUR après avoir compris tes erreurs, pas avant : s'il cache tout dès le début, tu ne vois plus les vrais problèmes de données.")}
   <h4>À toi de jouer</h4>
-  <details class="exo"><summary>Exercice · Le commercial du client</summary><p>L'onglet Clients contient en A le code client, en B le nom, en C le type, en D la ville, en E le commercial. Ton code client propre est en H2. Quelle formule donne le commercial ?</p><details><summary>Voir la solution</summary><p><code>=RECHERCHEV(H2;Clients!$A:$E;5;FAUX)</code> : la plage commence en A (où sont les codes), et le commercial est dans la 5e colonne de la plage.</p></details></details>`},
+  ${EXO(1,"Retrouver le commercial du client",
+  `<p>Tu as deux onglets. L'onglet <b>Clients</b> contient la liste des clients avec leur commercial :</p>
+  ${G([["Code","Nom","Ville","Commercial"],["CLI001","Le Bouchon des Halles","Lyon 2e","Karim Benali"],["CLI002","Brasserie du Rhône","Lyon 3e","Sophie Martin"],["CLI003","Hôtel Bellecour","Lyon 6e","Lucas Moreau"]],{sheet:"Clients"})}
+  <p>L'onglet <b>Ventes</b> contient tes factures, avec seulement le code client. Tu veux afficher le commercial en C2, puis recopier vers le bas.</p>
+  ${G([["Facture","Code client","Commercial"],["FAC-0001","CLI003",""],["FAC-0002","CLI001",""]],{cell:"C2",sheet:"Ventes"})}
+  <p><b>Question :</b> quelle formule écris-tu en C2 ?</p>`,
+  `<p><b>Réponse :</b> <code>=RECHERCHEV(B2;Clients!$A:$D;4;FAUX)</code></p>
+  ${G([["Facture","Code client","Commercial"],["FAC-0001","CLI003","Lucas Moreau"],["FAC-0002","CLI001","Karim Benali"]],{cell:"C2",fx:"=RECHERCHEV(B2;Clients!$A:$D;4;FAUX)",refs:[["B2"]],sheet:"Ventes"})}
+  <ol><li><code>B2</code> : on cherche CLI003.</li>
+  <li><code>Clients!$A:$D</code> : on cherche dans l'onglet Clients, colonnes A à D. Les codes sont bien dans la 1re colonne (A).</li>
+  <li><code>4</code> : on compte les colonnes à partir de A : A = 1, B = 2, C = 3, D = 4. Le commercial est dans la 4e.</li>
+  <li><code>FAUX</code> : on veut exactement CLI003, pas un code « proche ».</li></ol>`)}
+  `},
 
   {id:'index', t:"4. INDEX + EQUIV : la version professionnelle", d:20, html:
   `<p>RECHERCHEV a deux limites. La valeur cherchée doit être dans la première colonne, et le n° de colonne est écrit « en dur » : si quelqu'un insère une colonne dans la table, ta formule renvoie la mauvaise donnée sans prévenir. INDEX + EQUIV n'a pas ces défauts. On les apprend séparément, puis ensemble.</p>
@@ -167,7 +242,16 @@ CONTENT.s01 = {
   <tr><td>Facilité</td><td>Plus simple à écrire</td><td>Un peu plus long</td></tr></tbody></table>
   ${TIP("Pour l'entretien","Depuis Excel 365, RECHERCHEX remplace les deux : =RECHERCHEX(D2;Produits!A:A;Produits!E:E). Ton Excel 2013 ne l'a pas, mais savoir qu'elle existe est un plus. INDEX + EQUIV marche partout : c'est pour ça qu'on l'apprend d'abord.")}
   <h4>À toi de jouer</h4>
-  <details class="exo"><summary>Exercice · Chercher vers la gauche</summary><p>Dans une table, les noms des clients sont en colonne B et leurs codes en colonne A. Tu connais le nom (en G2) et tu veux le code. Pourquoi RECHERCHEV ne marche pas, et quelle formule utiliser ?</p><details><summary>Voir la solution</summary><p>RECHERCHEV ne sait chercher que dans la 1re colonne et renvoyer vers la droite. Avec INDEX + EQUIV : <code>=INDEX($A:$A;EQUIV(G2;$B:$B;0))</code>.</p></details></details>`},
+  ${EXO(1,"Chercher vers la gauche",
+  `<p>Dans ce tableau, le nom est en colonne A et le code en colonne B. Tu connais le <b>code</b> d'un client (écrit en D2) et tu veux retrouver son <b>nom</b> en E2.</p>
+  ${G([["Nom","Code","","Code cherché","Nom trouvé"],["Le Bouchon des Halles","CLI001","","CLI003",""],["Brasserie du Rhône","CLI002"],["Hôtel Bellecour","CLI003"],["Café des Terreaux","CLI004"]],{cell:"E2",sheet:"Clients"})}
+  <p><b>Question :</b> pourquoi RECHERCHEV ne peut pas faire ça, et quelle formule utiliser en E2 ?</p>`,
+  `<p><b>Pourquoi pas RECHERCHEV :</b> elle cherche toujours dans la 1re colonne de la plage, puis renvoie une colonne <b>à droite</b>. Ici, le code (ce qu'on cherche) est à droite du nom (ce qu'on veut) : impossible.</p>
+  <p><b>Réponse :</b> <code>=INDEX(A:A;EQUIV(D2;B:B;0))</code></p>
+  ${G([["Nom","Code","","Code cherché","Nom trouvé"],["Le Bouchon des Halles","CLI001","","CLI003","Hôtel Bellecour"],["Brasserie du Rhône","CLI002"],["Hôtel Bellecour","CLI003"],["Café des Terreaux","CLI004"]],{cell:"E2",fx:"=INDEX(A:A;EQUIV(D2;B:B;0))",refs:[["D2"],["B4"],["A4"]],sheet:"Clients"})}
+  <ol><li><code>EQUIV(D2;B:B;0)</code> cherche CLI003 dans la colonne B : il est à la ligne <b>4</b>. EQUIV renvoie 4.</li>
+  <li><code>INDEX(A:A;4)</code> va dans la colonne A et prend la 4e cellule : <b>Hôtel Bellecour</b>.</li></ol>`)}
+  `},
 
   {id:'si', t:"5. SI, ET, OU : faire réagir le tableau", d:15, html:
   `<p>SI pose une question à Excel et affiche une chose ou une autre selon la réponse.</p>
@@ -186,7 +270,17 @@ CONTENT.s01 = {
   ${F('=SI(A2=0;"";B2/A2)')}
   <p>Sans ce SI, une ligne à CA nul afficherait #DIV/0!, et cette erreur se propagerait dans tous tes totaux. <code>""</code> (deux guillemets) affiche une cellule vide.</p>
   <h4>À toi de jouer</h4>
-  <details class="exo"><summary>Exercice · Prime des commerciaux</summary><p>Un commercial touche une prime si son CA (B2) dépasse 50 000 € <b>et</b> son taux de marge (C2) est d'au moins 30 %. La prime vaut 500 €, sinon 0. Quelle formule ?</p><details><summary>Voir la solution</summary><p><code>=SI(ET(B2>50000;C2>=30%);500;0)</code></p></details></details>`},
+  ${EXO(1,"La prime des commerciaux",
+  `<p>Un commercial touche une prime de 500 € seulement s'il remplit <b>les deux</b> conditions : son CA dépasse 50 000 €, <b>et</b> son taux de marge est d'au moins 30 %. Sinon, il touche 0 €.</p>
+  ${G([["Commercial","CA","Taux de marge","Prime"],["Karim","62 000","32%",""],["Sophie","48 000","35%",""],["Lucas","71 000","18%",""]],{cell:"D2",sheet:"Primes"})}
+  <p><b>Question :</b> quelle formule écris-tu en D2, pour la recopier jusqu'en D4 ?</p>`,
+  `<p><b>Réponse :</b> <code>=SI(ET(B2>50000;C2>=30%);500;0)</code></p>
+  ${G([["Commercial","CA","Taux de marge","Prime"],["Karim","62 000","32%","500"],["Sophie","48 000","35%","0"],["Lucas","71 000","18%","0"]],{cell:"D2",fx:"=SI(ET(B2>50000;C2>=30%);500;0)",refs:[["B2"],["C2"]],hi:["D2","D3","D4"],sheet:"Primes"})}
+  <ul><li><b>Karim</b> : 62 000 &gt; 50 000 ✓ et 32 % ≥ 30 % ✓ → 500 €.</li>
+  <li><b>Sophie</b> : 48 000 n'est pas &gt; 50 000 ✗ → 0 €, même si sa marge est bonne.</li>
+  <li><b>Lucas</b> : CA ✓ mais 18 % &lt; 30 % ✗ → 0 €.</li></ul>
+  <p>Avec <code>OU</code> à la place de <code>ET</code>, il suffirait d'une seule condition : les trois toucheraient la prime.</p>`)}
+  `},
 
   {id:'sommesi', t:"6. SOMME.SI.ENS, NB.SI.ENS, MOYENNE.SI.ENS", d:25, html:
   `<p>Ce sont les fonctions les plus utilisées en contrôle de gestion : additionner, compter ou faire une moyenne <b>seulement pour les lignes qui respectent des critères</b>. C'est ce qui permet de passer de 1 400 lignes de ventes à un tableau de synthèse lisible.</p>
@@ -207,15 +301,29 @@ CONTENT.s01 = {
   <tr><td>Comparaison avec une cellule</td><td><code>"&gt;="&amp;B1</code> (le &amp; colle le signe et la valeur)</td></tr>
   <tr><td>Commence par</td><td><code>"PEM*"</code> (l'étoile remplace n'importe quelle suite de caractères)</td></tr></tbody></table>
   <h4>La méthode du contrôleur : un tableau entier avec une seule formule</h4>
-  <p>On combine SOMME.SI.ENS et les références mixtes (notion 1, cas n°3). Familles en colonne A, numéros de mois en ligne 4 :</p>
+  <p>On combine SOMME.SI.ENS et la technique du tableau à double entrée vue dans la notion 1 : les familles sont écrites en colonne A (une par ligne), les numéros de mois en ligne 4 (un par colonne), et une seule formule remplit tout le tableau.</p>
   ${G([["Famille \\ Mois","1","2","3"],["Vaisselle","11 795","7 950","12 323"],["Emballages","24 336","26 217","29 524"]],{start:4,fx:"=SOMME.SI.ENS(Ventes!$P:$P;Ventes!$J:$J;$A5;Ventes!$G:$G;B$4)",cell:"B5",hi:["B5","C5","D5","B6","C6","D6"],src:["A5","A6","B4","C4","D4"]})}
   <ul><li><code>Ventes!$P:$P</code>, <code>$J:$J</code>, <code>$G:$G</code> : colonnes de données, totalement bloquées.</li>
   <li><code>$A5</code> : la famille, toujours en colonne A, mais une par ligne.</li>
   <li><code>B$4</code> : le mois, toujours en ligne 4, mais un par colonne.</li></ul>
   ${TRAP("Toujours une ligne de contrôle","Le total de ton tableau de synthèse doit être égal à SOMME de la colonne source. Si une famille est mal orthographiée en colonne A, ses ventes disparaissent du tableau sans erreur : seul le contrôle te le dira.")}
   <h4>À toi de jouer</h4>
-  <details class="exo"><summary>Exercice 1 · Compter les grosses ventes</summary><p>Combien de lignes de ventes dépassent 1 000 € de CA net (colonne P) ?</p><details><summary>Voir la solution</summary><p><code>=NB.SI.ENS(Ventes!P:P;"&gt;1000")</code></p></details></details>
-  <details class="exo"><summary>Exercice 2 · CA d'un client sur un trimestre</summary><p>Le code client est en A2, et tu veux son CA net du 2e trimestre (mois 4 à 6, colonne G).</p><details><summary>Voir la solution</summary><p><code>=SOMME.SI.ENS(Ventes!$P:$P;Ventes!$H:$H;A2;Ventes!$G:$G;"&gt;=4";Ventes!$G:$G;"&lt;=6")</code> : on peut mettre deux critères sur la même colonne pour faire une fourchette.</p></details></details>`},
+  <p>Les deux exercices utilisent ce petit tableau de ventes :</p>
+  ${G([["Commercial","Mois","CA net"],["Lucas Moreau","4","1 352"],["Karim Benali","4","215"],["Lucas Moreau","5","598"],["Sophie Martin","5","1 240"],["Lucas Moreau","6","2 100"],["Karim Benali","6","980"]],{sheet:"Ventes"})}
+  ${EXO(1,"Compter les grosses ventes",
+  `<p>Combien de ventes dépassent 1 000 € de CA net ? Tu écris la formule en E2.</p>`,
+  `<p><b>Réponse :</b> <code>=NB.SI.ENS(C2:C7;">1000")</code> → <b>3</b></p>
+  ${G([["Commercial","Mois","CA net","","Nb > 1 000 €"],["Lucas Moreau","4","1 352","","3"],["Karim Benali","4","215"],["Lucas Moreau","5","598"],["Sophie Martin","5","1 240"],["Lucas Moreau","6","2 100"],["Karim Benali","6","980"]],{cell:"E2",fx:'=NB.SI.ENS(C2:C7;">1000")',refs:[["C2","C5","C6"]],sheet:"Ventes"})}
+  <p>Les 3 ventes comptées sont encadrées : 1 352, 1 240 et 2 100. Le critère <code>">1000"</code> s'écrit entre guillemets.</p>`)}
+  ${EXO(2,"Le CA de Lucas en mai et juin",
+  `<p>Tu veux le CA net de Lucas Moreau pour les mois 5 et 6 seulement. Tu écris la formule en E2.</p>`,
+  `<p><b>Réponse :</b> <code>=SOMME.SI.ENS(C2:C7;A2:A7;"Lucas Moreau";B2:B7;">=5")</code> → <b>2 698</b></p>
+  ${G([["Commercial","Mois","CA net","","CA Lucas mai-juin"],["Lucas Moreau","4","1 352","","2 698"],["Karim Benali","4","215"],["Lucas Moreau","5","598"],["Sophie Martin","5","1 240"],["Lucas Moreau","6","2 100"],["Karim Benali","6","980"]],{cell:"E2",fx:'=SOMME.SI.ENS(C2:C7;A2:A7;"Lucas Moreau";B2:B7;">=5")',refs:[["C4","C6"]],sheet:"Ventes"})}
+  <ul><li>1re condition : le commercial est Lucas Moreau (lignes 2, 4 et 6).</li>
+  <li>2e condition : le mois est supérieur ou égal à 5 (lignes 4 et 6).</li>
+  <li>Seules les lignes 4 et 6 remplissent les deux conditions : 598 + 2 100 = 2 698.</li></ul>
+  <p>Pour une fourchette fermée (par exemple mois 4 à 5), on met deux critères sur la même colonne : <code>B2:B7;">=4";B2:B7;"<=5"</code>.</p>`)}
+  `},
 
   {id:'top', t:"7. Faire un classement : GRANDE.VALEUR", d:10, html:
   `${F("=GRANDE.VALEUR(plage ; k)    → la k-ième plus grande valeur\n=PETITE.VALEUR(plage ; k)    → la k-ième plus petite")}
@@ -223,7 +331,18 @@ CONTENT.s01 = {
   <p>GRANDE.VALEUR donne un montant, pas un nom. Pour retrouver le client qui correspond, on réutilise INDEX + EQUIV (notion 4) : EQUIV cherche ce montant dans la colonne des CA, INDEX renvoie le nom à la même position.</p>
   ${G([["Rang","Client","CA net"],["1","Restaurant L'Écullois","32 473"],["2","Restaurant Le Guillotière","26 837"]],{fx:"=INDEX(Clients!$B:$B;EQUIV(C2;Clients!$F:$F;0))",cell:"B2",hi:["B2"],src:["A2","C2"]})}
   <p>En C2 : <code>=GRANDE.VALEUR(Clients!$F:$F;A2)</code>. En B2 : la formule ci-dessus.</p>
-  ${TRAP("Limite à connaître","Si deux clients ont exactement le même CA, EQUIV renverra deux fois le premier. Avec des montants au centime près, c'est très rare, mais il faut le savoir.")}`},
+  ${TRAP("Limite à connaître","Si deux clients ont exactement le même CA, EQUIV renverra deux fois le premier. Avec des montants au centime près, c'est très rare, mais il faut le savoir.")}
+  <h4>À toi de jouer</h4>
+  ${EXO(1,"Le 1er et le 2e client",
+  `<p>Voici le CA de 5 clients. En E2 et E3, tu veux les deux plus gros CA, et en F2 et F3 le nom du client correspondant.</p>
+  ${G([["Client","CA net","","Rang","CA","Client"],["Le Bouchon","18 200","","1","",""],["La Brasserie","25 400","","2","",""],["L'Hôtel","31 900"],["Le Café","12 300"],["Le Traiteur","22 750"]],{cell:"E2",sheet:"Top clients"})}
+  <p><b>Question :</b> quelles formules écris-tu en E2 et en F2 (à recopier en ligne 3) ?</p>`,
+  `<p><b>Réponse :</b> E2 <code>=GRANDE.VALEUR($B$2:$B$6;D2)</code> · F2 <code>=INDEX($A$2:$A$6;EQUIV(E2;$B$2:$B$6;0))</code></p>
+  ${G([["Client","CA net","","Rang","CA","Client"],["Le Bouchon","18 200","","1","31 900","L'Hôtel"],["La Brasserie","25 400","","2","25 400","La Brasserie"],["L'Hôtel","31 900"],["Le Café","12 300"],["Le Traiteur","22 750"]],{cell:"F2",fx:"=INDEX($A$2:$A$6;EQUIV(E2;$B$2:$B$6;0))",refs:[["E2"],["B4"],["A4"]],sheet:"Top clients"})}
+  <ol><li>E2 : le rang 1 (D2) donne le plus grand CA, 31 900. En E3, D3 vaut 2 : on obtient le 2e, 25 400.</li>
+  <li>F2 : EQUIV cherche 31 900 dans B2:B6 et le trouve en 3e position. INDEX prend la 3e valeur de A2:A6 : L'Hôtel.</li>
+  <li>Les plages sont bloquées avec des $ parce qu'on recopie vers le bas.</li></ol>`)}
+  `},
 
   {id:'gestion', t:"8. Les notions de gestion derrière les formules", d:20, html:
   `<p>Excel n'est qu'un outil. Ce qu'on attend de toi en stage, c'est de comprendre ce que tu calcules et de savoir l'expliquer.</p>
@@ -244,7 +363,14 @@ CONTENT.s01 = {
   <h4>L'effet mix</h4>
   <p>Le taux de marge global est une moyenne pondérée des taux de chaque famille. Si une famille à bonne marge prend plus de poids, le taux global monte, même si une autre famille s'effondre. C'est pour ça qu'un contrôleur <b>découpe toujours</b> : par famille, puis par commercial, puis par mois, jusqu'à trouver la cause.</p>
   <h4>À toi de jouer</h4>
-  <details class="exo"><summary>Exercice · Calcul de marge</summary><p>Un produit est acheté 40 € et vendu 60 €. Calcule le taux de marge et le taux de marque. Puis : quel est le taux de marque si on accorde 10 % de remise ?</p><details><summary>Voir la solution</summary><p>Marge 20 € : taux de marge 50 %, taux de marque 33,3 %. Avec 10 % de remise : prix 54 €, marge 14 €, taux de marque 25,9 %.</p></details></details>`},
+  ${EXO(1,"Calculer la marge et la remise",
+  `<p>Un produit est acheté 40 € et vendu 60 €. Ligne 3, le même produit est vendu avec 10 % de remise, donc à 54 €.</p>
+  ${G([["","Prix d'achat","Prix de vente","Marge","Taux de marge","Taux de marque"],["Sans remise","40","60","","",""],["Remise 10 %","40","54","","",""]],{cell:"D2",sheet:"Marges"})}
+  <p><b>Question :</b> quelles formules écris-tu en D2, E2 et F2, et quels résultats obtiens-tu sur les deux lignes ?</p>`,
+  `<p><b>Réponse :</b> D2 <code>=C2-B2</code> · E2 <code>=D2/B2</code> · F2 <code>=D2/C2</code>, puis on recopie sur la ligne 3.</p>
+  ${G([["","Prix d'achat","Prix de vente","Marge","Taux de marge","Taux de marque"],["Sans remise","40","60","20","50,0%","33,3%"],["Remise 10 %","40","54","14","35,0%","25,9%"]],{cell:"F3",fx:"=D3/C3",refs:[["D3"],["C3"]],hi:["D2","E2","F2","D3","E3","F3"],sheet:"Marges"})}
+  <p>La remise de 10 % fait passer la marge de 20 € à 14 € : on perd 30 % de la marge, pas 10 %. C'est exactement le problème de Lucas dans le cas pratique.</p>`)}
+  `},
 
   {id:'raccourcis', t:"9. Les raccourcis qui font gagner du temps", d:5, html:
   `<p>En entreprise, la vitesse compte. Ces raccourcis sont ceux qu'on voit le plus chez les contrôleurs de gestion.</p>
@@ -261,12 +387,30 @@ CONTENT.s01 = {
   ],
 
   quiz: [
-    {q:"Tu recopies =A4*B1 vers le bas et tu obtiens des zéros. Que faut-il écrire ?", o:["=A4*B1","=$A$4*B1","=A4*$B$1","=A$4*B1"], a:2, e:"Le taux est dans une seule cellule : il faut bloquer B1 en ligne et en colonne, donc $B$1."},
-    {q:"Dans un tableau familles (colonne A) × mois (ligne 4), quelle référence pour la famille ?", o:["A5","$A5","A$5","$A$5"], a:1, e:"La famille est toujours en colonne A (on bloque A) mais change à chaque ligne (on laisse la ligne libre) : $A5."},
-    {q:"RECHERCHEV renvoie #N/A alors que le code client existe bien dans la table. Cause la plus probable ?", o:["Le 4e argument est FAUX","Un espace parasite dans le code","La table est trop grande","Il manque un $"], a:1, e:"« CLI007 » et « CLI007 » suivi d'un espace sont deux textes différents. SUPPRESPACE règle le problème."},
-    {q:"Dans SOMME.SI.ENS, quelle plage vient en premier ?", o:["La plage du premier critère","La plage à additionner","Le critère","Peu importe"], a:1, e:"SOMME.SI.ENS et MOYENNE.SI.ENS commencent par la plage à additionner (ou à moyenner), puis les couples plage / critère."},
-    {q:"Achat 100 €, vente 125 €. Quel est le taux de marque ?", o:["25 %","20 %","125 %","80 %"], a:1, e:"Taux de marque = marge / prix de vente = 25 / 125 = 20 %. Le taux de marge (marge / prix d'achat) serait de 25 %."},
-    {q:"Pourquoi préférer INDEX + EQUIV à RECHERCHEV ?", o:["C'est plus court","Ça marche même si on insère une colonne","C'est plus rapide à taper","RECHERCHEV n'existe plus"], a:1, e:"INDEX + EQUIV désigne directement la colonne à renvoyer : insérer une colonne ne la décale pas, et la colonne de recherche peut être n'importe où."}
+    {q:"Le taux de TVA est en B1. En B4, on a écrit =A4*B1, puis on a recopié la formule vers le bas. B4 est juste, mais B5 et B6 affichent 0. Quelle formule fallait-il écrire en B4 ?",
+     h:G([["Taux TVA","20%"],["",""],["Prix HT","TVA"],["100","20"],["250","0"],["80","0"]],{cell:"B5",fx:"=A5*B2",refs:[["A5"],["B2"]],sheet:"Quiz 1"}),
+     o:["=A4*B1","=$A$4*B1","=A4*$B$1","=A$4*B1"], a:2,
+     e:"En B5, la formule est devenue =A5*B2 (on le voit dans la barre de formule) : B2 est vide, d'où le 0. Il faut bloquer le taux : =A4*$B$1. A4 reste sans $ pour que chaque ligne prenne son propre prix."},
+    {q:"On veut remplir ce tableau (familles × mois) avec une seule formule en B5, recopiée vers la droite et vers le bas. Comment écrire la référence à la famille, qui est en A5 ?",
+     h:G([["Famille \\ Mois","1","2","3"],["Vaisselle","","",""],["Emballages","","",""]],{start:4,cell:"B5",refs:[["A5","A6"],["B4","C4","D4"]],sheet:"Quiz 2"}),
+     o:["A5","$A5","A$5","$A$5"], a:1,
+     e:"La famille est toujours en colonne A (on bloque la colonne avec $A), mais elle change à chaque ligne (on laisse la ligne libre). Donc $A5. Le mois, lui, s'écrira B$4."},
+    {q:"Dans l'onglet Ventes, RECHERCHEV renvoie #N/A pour le client de la ligne 2, alors que CLI007 existe bien dans l'onglet Clients. Quelle est la cause la plus probable ?",
+     h:G([["Code client","Longueur","Commercial"],["CLI007 ","7","#N/A"],["CLI012","6","Sophie Martin"]],{cell:"C2",fx:"=RECHERCHEV(A2;Clients!$A:$E;5;FAUX)",refs:[["A2"]],sheet:"Quiz 3"}),
+     o:["Le 4e argument FAUX est une erreur","Il y a un espace invisible après le code","La table Clients est trop grande","Il manque un $ devant A2"], a:1,
+     e:"La colonne Longueur (=NBCAR) indique 7 caractères au lieu de 6 : il y a un espace après CLI007. Pour Excel, « CLI007 » avec un espace et « CLI007 » sont deux textes différents. SUPPRESPACE règle le problème."},
+    {q:"Quelle formule additionne le CA de Lucas Moreau dans ce tableau ?",
+     h:G([["Commercial","Mois","CA net"],["Lucas Moreau","4","1 352"],["Karim Benali","4","215"],["Lucas Moreau","5","598"]],{refs:[["C2","C4"]],sheet:"Quiz 4"}),
+     o:['=SOMME.SI.ENS(A:A;"Lucas Moreau";C:C)','=SOMME.SI.ENS(C:C;A:A;"Lucas Moreau")','=SOMME.SI.ENS("Lucas Moreau";A:A;C:C)','=SOMME.SI.ENS(C:C;"Lucas Moreau";A:A)'], a:1,
+     e:"Avec SOMME.SI.ENS, la colonne à additionner (C, le CA) vient en premier. Ensuite on donne la colonne du critère (A) puis le critère (\"Lucas Moreau\"). Résultat : 1 352 + 598 = 1 950."},
+    {q:"Ce produit est acheté 100 € et vendu 125 €. Quel est son taux de marque ?",
+     h:G([["Prix d'achat","Prix de vente","Marge"],["100","125","25"]],{sheet:"Quiz 5"}),
+     o:["25 %","20 %","125 %","80 %"], a:1,
+     e:"Taux de marque = marge / prix de vente = 25 / 125 = 20 %. Le taux de marge, lui, se calcule sur le prix d'achat : 25 / 100 = 25 %."},
+    {q:"Le nom du client est en colonne A, son code en colonne B. On connaît le code (en D2) et on veut le nom. Quelle formule fonctionne ?",
+     h:G([["Nom","Code","","Code cherché"],["Le Bouchon","CLI001","","CLI002"],["La Brasserie","CLI002"],["L'Hôtel","CLI003"]],{cell:"E2",refs:[["D2"]],sheet:"Quiz 6"}),
+     o:["=RECHERCHEV(D2;A:B;1;FAUX)","=INDEX(A:A;EQUIV(D2;B:B;0))","=EQUIV(D2;A:A;0)","=INDEX(B:B;EQUIV(D2;A:A;0))"], a:1,
+     e:"EQUIV cherche CLI002 dans la colonne B des codes et trouve la position 3. INDEX prend la 3e cellule de la colonne A des noms : La Brasserie. RECHERCHEV ne marche pas ici, car elle ne peut chercher que dans la 1re colonne de la plage (A, les noms)."}
   ],
   cas: {
     brief: "C'est ton premier jour chez Rhôna Distribution. M. Faure, le DAF, te transmet l'export brut des ventes de janvier à juin 2026.",

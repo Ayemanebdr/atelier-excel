@@ -146,18 +146,39 @@ pre.formula code{background:none;padding:0}
 .tip,.trap{border-radius:14px;padding:12px 14px;margin:14px 0;font-size:15px}
 .tip{background:var(--yl)}.trap{background:var(--rl)}
 .tip b,.trap b{display:block;margin-bottom:2px}.trap b{color:var(--r)}
-figure.xl{margin:14px 0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card)}
-figure.xl figcaption{font-size:13px;color:var(--mute);padding:8px 12px;border-bottom:1px solid var(--line);font-weight:600}
-.fx{display:flex;border-bottom:1px solid var(--line);font-size:13.5px;background:var(--soft)}
-.fx .nm{padding:7px 10px;border-right:1px solid var(--line);color:var(--mute);font-family:"JetBrains Mono",monospace;min-width:52px}
-.fx code{background:none;padding:7px 10px}
-.scroll{overflow-x:auto}
-figure.xl table{border-collapse:collapse;font-size:13.5px;width:100%}
-figure.xl th{background:var(--soft);color:var(--mute);font-weight:600;font-size:11.5px;padding:3px 8px;border:1px solid var(--line)}
-figure.xl td{border:1px solid var(--line);padding:6px 9px;white-space:nowrap}
-figure.xl td.num{text-align:right;font-variant-numeric:tabular-nums}
-figure.xl td.hi{background:var(--yl);box-shadow:inset 0 0 0 2px var(--y);font-weight:700}
-figure.xl td.src{background:var(--gl)}
+figure.xl{margin:16px 0;border:1px solid #c6c6c6;border-radius:6px;overflow:hidden;background:#fff;color:#000;font-family:Calibri,Carlito,"Segoe UI",Arial,sans-serif;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+figure.xl figcaption{font:600 13px Manrope,sans-serif;color:#3b4a42;background:#f3f6f4;padding:8px 12px;border-bottom:1px solid #d4d4d4}
+.xbar{display:flex;align-items:stretch;border-bottom:1px solid #d4d4d4;background:#fff;font-size:14px;min-height:30px}
+.xname{width:64px;flex:none;border-right:1px solid #d4d4d4;padding:5px 8px;color:#222}
+.xicons{flex:none;padding:5px 10px;color:#8a8a8a;border-right:1px solid #d4d4d4;letter-spacing:4px;font-size:12px}
+.xicons i{font-family:Georgia,serif;letter-spacing:0;color:#555;font-size:14px}
+.xfx{padding:5px 10px;font-family:Calibri,Carlito,"Segoe UI",Arial,sans-serif;white-space:nowrap;overflow-x:auto;color:#000}
+figure.xl table{border-collapse:collapse;font-size:15px;width:max-content;min-width:100%;background:#fff}
+figure.xl th{background:#f8f8f8;color:#444;font:400 12px "Segoe UI",Arial,sans-serif;padding:2px 6px;border:1px solid #d4d4d4;text-align:center;min-width:28px}
+figure.xl thead th{min-width:84px}figure.xl thead th.xc{min-width:30px;background:#f0f0f0}
+figure.xl th.xa{background:#e1e1e1;color:#217346;border-bottom:2px solid #217346}
+figure.xl tbody th.xa{border-bottom:1px solid #d4d4d4;border-right:2px solid #217346}
+figure.xl td{border:1px solid #e1e1e1;padding:3px 8px;white-space:nowrap;height:24px;text-align:left;position:relative;color:#000}
+figure.xl td.xn{text-align:right;font-variant-numeric:tabular-nums}
+figure.xl td.xb,figure.xl td.xe{text-align:center}
+figure.xl td.xt{text-align:left}
+figure.xl td.xt::before{content:"";position:absolute;left:0;top:0;border-top:6px solid #2e8b57;border-right:6px solid transparent}
+figure.xl td.xs{background:#e3efe8}
+figure.xl td.xr0{box-shadow:inset 0 0 0 2px #2f6fd6;background:#eaf1fc}
+figure.xl td.xr1{box-shadow:inset 0 0 0 2px #d23b2a;background:#fcecea}
+figure.xl td.xr2{box-shadow:inset 0 0 0 2px #7b3fb5;background:#f3ecfa}
+figure.xl td.xr3{box-shadow:inset 0 0 0 2px #1d8a4c;background:#e8f5ee}
+figure.xl td.xact{box-shadow:inset 0 0 0 2px #217346;font-weight:400}
+figure.xl td.xact::after{content:"";position:absolute;right:-3px;bottom:-3px;width:6px;height:6px;background:#217346;border:1px solid #fff;z-index:1}
+.xtabs{background:#f3f3f3;border-top:1px solid #d4d4d4;padding:0 8px;font:12px "Segoe UI",Arial,sans-serif}
+.xtabs span{display:inline-block;background:#fff;color:#217346;font-weight:600;padding:4px 14px;border-bottom:2px solid #217346}
+details.exo .exn{font:700 12px Manrope,sans-serif;color:#fff;background:var(--g);border-radius:99px;padding:2px 9px;margin-right:10px}
+details.exo .exb{padding-top:6px}
+details.exo details.sol{margin-top:10px;border-top:1px dashed var(--line);padding-top:8px}
+details.exo details.sol>summary{cursor:pointer;color:var(--g2);font-weight:800;font-size:14.5px;min-height:36px;display:flex;align-items:center}
+details.exo .solb{background:var(--gl);border-radius:12px;padding:12px 14px;margin-top:6px}
+details.exo .solb p:last-child{margin-bottom:0}
+.qh{margin:4px 0 14px}
 table.plain{border-collapse:collapse;width:100%;font-size:14.5px;margin:12px 0}
 table.plain th,table.plain td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
 table.plain th{font-size:12.5px;color:var(--mute)}
@@ -166,8 +187,7 @@ tr.bad td{color:var(--r);font-weight:700}
 .donebtn{margin-top:16px}
 details.exo{border:1.5px solid var(--line);border-radius:14px;padding:10px 14px;margin:8px 0;background:var(--card)}
 details.exo>summary{cursor:pointer;font-weight:700;min-height:32px;display:flex;align-items:center}
-details.exo details{margin-top:6px}details.exo details>summary{cursor:pointer;color:var(--g2);font-weight:700;font-size:14px}
-details.exo details p{background:var(--gl);border-radius:10px;padding:10px 12px;margin-top:6px}
+
 /* quiz */
 .quiz{background:var(--card);border-radius:20px;box-shadow:var(--sh);padding:clamp(18px,3vw,26px);margin-top:18px}
 .qtop{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
@@ -232,8 +252,8 @@ textarea{min-height:88px;resize:vertical}
   </div>
 </div>
 <nav class="tabbar" id="tabbar" aria-label="Navigation"></nav>
-<script src="content.js?v=5"></script>
-<script src="firebase-config.js?v=5" onerror="window.FIREBASE_CONFIG=null"></script>
+<script src="content.js?v=6"></script>
+<script src="firebase-config.js?v=6" onerror="window.FIREBASE_CONFIG=null"></script>
 <script>
 {
 const app = document.getElementById('app');
@@ -369,7 +389,7 @@ function quiz(k, c) {
   const score = Object.entries(ans).filter(([j, v]) => c.quiz[j] && c.quiz[j].a === v).length;
   return `<div class="quiz" id="n-quiz"><div class="qtop"><h3>Quiz de fin de cours</h3><span class="small mute" style="font-weight:700">${score}/${c.quiz.length} bonnes</span></div>
   <div class="qdots">${c.quiz.map((qq, j) => `<i class="${j===i?'c':ans[j]===undefined?'':ans[j]===qq.a?'r':'w'}"></i>`).join('')}</div>
-  <div class="qq">${i+1}. ${esc(q.q)}</div>
+  <div class="qq">${i+1}. ${esc(q.q)}</div>${q.h ? '<div class="qh">' + q.h + '</div>' : ''}
   <div class="opts">${q.o.map((o, j) => `<button data-q="${i}" data-o="${j}" class="${a===undefined?'':j===q.a?'right':j===a?'wrong':''}">${esc(o)}</button>`).join('')}</div>
   ${a !== undefined ? `<div class="ex"><b>${a===q.a?'Bonne réponse.':'Pas tout à fait.'}</b> ${esc(q.e)}</div>` : ''}
   <div class="qnav"><button class="btn ghost" data-qn="-1" ${i===0?'disabled style="opacity:.4"':''}>Précédente</button>${i < c.quiz.length - 1 ? `<button class="btn g" data-qn="1">Question suivante</button>` : `<button class="btn y" data-tab="cas">Passer au cas pratique</button>`}</div></div>`;
