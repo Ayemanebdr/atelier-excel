@@ -164,6 +164,10 @@ table.plain th{font-size:12.5px;color:var(--mute)}
 table.num td:not(:first-child),table.num th:not(:first-child){text-align:right;white-space:nowrap}
 tr.bad td{color:var(--r);font-weight:700}
 .donebtn{margin-top:16px}
+details.exo{border:1.5px solid var(--line);border-radius:14px;padding:10px 14px;margin:8px 0;background:var(--card)}
+details.exo>summary{cursor:pointer;font-weight:700;min-height:32px;display:flex;align-items:center}
+details.exo details{margin-top:6px}details.exo details>summary{cursor:pointer;color:var(--g2);font-weight:700;font-size:14px}
+details.exo details p{background:var(--gl);border-radius:10px;padding:10px 12px;margin-top:6px}
 /* quiz */
 .quiz{background:var(--card);border-radius:20px;box-shadow:var(--sh);padding:clamp(18px,3vw,26px);margin-top:18px}
 .qtop{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
@@ -228,8 +232,8 @@ textarea{min-height:88px;resize:vertical}
   </div>
 </div>
 <nav class="tabbar" id="tabbar" aria-label="Navigation"></nav>
-<script src="content.js?v=4"></script>
-<script src="firebase-config.js?v=4" onerror="window.FIREBASE_CONFIG=null"></script>
+<script src="content.js?v=5"></script>
+<script src="firebase-config.js?v=5" onerror="window.FIREBASE_CONFIG=null"></script>
 <script>
 {
 const app = document.getElementById('app');
