@@ -156,6 +156,10 @@ CONTENT.s01 = {
   ${G([["Code brut","NBCAR","Propre"],["CLI007 ","7","CLI007"],["CLI012","6","CLI012"],["  CLI003","8","CLI003"]],{fx:"=SUPPRESPACE(A2)",cell:"C2",hi:["C2","C3","C4"],src:["A2","A4"]})}
   <ul><li><code>=NBCAR(A2)</code> compte les caractères. Un code client fait 6 caractères : tout ce qui dépasse trahit des espaces.</li>
   <li><code>=SUPPRESPACE(A2)</code> supprime les espaces au début et à la fin, et réduit les espaces doubles au milieu à un seul.</li></ul>
+  <h4>SUPPRESPACE ne supprime pas tous les espaces</h4>
+  <p>Attention : SUPPRESPACE enlève les espaces au début et à la fin, mais <b>au milieu du texte, elle en garde toujours un</b>. Si deux espaces se suivent au milieu, elle en laisse un seul. C'est voulu, pour ne pas abîmer les noms comme « Café des Terreaux ».</p>
+  ${G([["Code brut","NBCAR","SUPPRESPACE","NBCAR","SUBSTITUE","NBCAR"],["TEST  003","9","TEST 003","8","TEST003","7"],["TEST001 ","8","TEST001","7","TEST001","7"]],{cell:"E2",fx:'=SUBSTITUE(A2;" ";"")',refs:[["A2"]],sheet:"Nettoyage"})}
+  <p>Pour supprimer <b>tous</b> les espaces, y compris au milieu, on utilise <code>=SUBSTITUE(A2;" ";"")</code> : elle remplace chaque espace <code>" "</code> par rien <code>""</code>. À réserver aux codes (CLI007, TEST003…), jamais aux noms ou aux adresses, qui ont besoin de leurs espaces.</p>
   <h4>Défaut n°2 : les nombres stockés en texte</h4>
   <p>Un nombre importé peut arriver « en texte » : il est aligné à gauche, un petit triangle vert apparaît dans le coin de la cellule. SOMME l'ignore sans rien dire, et ton total est faux.</p>
   ${G([["Quantité","ESTTEXTE","Nombre"],["12","FAUX","12"],["8","VRAI","8"],["5","FAUX","5"]],{fx:"=CNUM(A3)",cell:"C3",hi:["B3"],src:["A3"]})}
@@ -458,6 +462,7 @@ CONTENT.s01 = {
   memo: [
     ["Références","$A$1 · $A1 · A$1","Bloquer colonne et/ou ligne ; touche F4"],
     ["Nettoyage","=SUPPRESPACE(C2)","Retire les espaces en trop"],
+    ["Nettoyage","=SUBSTITUE(A2;\" \";\"\")","Supprime TOUS les espaces, même au milieu (pour les codes)"],
     ["Nettoyage","=CNUM(E2)","Convertit un nombre stocké en texte"],
     ["Nettoyage","=NBCAR(C2) · =ESTTEXTE(E2)","Repérer espaces parasites et textes"],
     ["Recherche","=RECHERCHEV(D2;Produits!$A:$C;3;FAUX)","Toujours FAUX pour un code"],
